@@ -1,0 +1,31 @@
+Liquid Fuel
+5 kg/l
+9 units of fuel to 11 units of oxidizer
+
+MK2 fueselage LFO
+Fuel: 135 units, 0.67 MT mass
+Oxidizer: 165 units, 0.82 MT mass
+
+LFO: 5kg per unit
+
+Shuttle Fuel Cell:
+7EC, consumes 1.81 kg of oxygen, 0.27 kg of hydrogen per hour
+
+.9 Liquid Fuel
+1.1 Oxidizer
+
+.362 units of oxidizer, 0.054 units of liquid fuel per hour
+
+1.0056e-04 units of oxidizer per second
+.000015 units of liquid fuel per second
+
+KSPI MK2 Extensions
+MK2 generator
+MK2 to single MK1 thermal
+MK2 to double MK1 thermal
+MK2 thermal
+
+117 KN with 1.25m antimatter reactor + generator
+Jool: 8,951 Mm?
+
+Roboray inspired design
