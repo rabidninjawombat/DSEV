@@ -1,0 +1,5 @@
+  description = The Mk1-2 Exploration Module (M.E.M) provides laboratory and living space for intrepid explorers as well as integrated fuel and monopropellant tanks. The M.E.M. also has a sizeable storage hold for your exploration needs.
+
+  description = Airbrakes are a real drag, which is a good thing when you're trying to slow down. This airbrake can be radially mounted.
+
+  description = This slim engine combines six nuclear engine modules that vent their exhaust through a common plug nozzle. It also has integrated landing legs to keep a spacecraft from scraping the ground.

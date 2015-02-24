@@ -1,0 +1,86 @@
+Nuclear engine types
+
+title = Aerospike Atomic Rocket Motor
+manufacturer = Wild Blue Industries
+description = The aerospike atomic rocket motor incorporates Wild Blue's Oxidizer Augmented Thrust System (O.A.T.S.). O.A.T.S. gives the engine an "afterburner" that generates high thrust at the expense of ISP but even in low-power mode, its thrust and ISP are comparable to the LV-N
+
+Note: The aerospike requires fuel rods. density = 0.01982 metric tons per unit
+
+title = Supernova Fusion Engine
+manufacturer = Wild Blue Industries
+description = Harness the power of an exploding sun! Well, a tiny artificial sun-like blob of fusion fire that exists for microseconds. The Supernova concentrates its Waxon-Waxoff Corporation electromagnets, focusing their power into a crushing blow that fuses fusion pellets into white hot plasma. The plasma then mixes with propellant pumped through the engine's center, which is then ejected out the magnetic nozzle to produce thrust. Alternately, switch to pure fusion pellet power for lower thrust and higher ISP. The Supernova needs a significant amount of electric charge to start up, and the reactor's fusion pellets will need periodic replenishment, and well, there's this heat problem...
+
+NASA design needed 108MW to start up
+NASA design has 35,000 sec ISP, 27 kn thrust.
+
+FusionPellets: density = 0.000006 metric tons (6 grams) per unit
+you can create fusion pellets from Jool's atmosphere. Simplified process of collecting lithium, deuterium, and helium-3
+Each small pellet tank holds 150 units of FusionPellets
+
+fusion uses .01 grams per sec to .001 grams per second (0.06 units per second, less per unity update)
+
+1 cubic meter = 1000 liters = 1000 units
+beanbag beans: 100 liters = 600 grams
+
+spherical tanks combine heat radiators with stack decouplers? 1700 units of FusionPellets
+
+liquid droplet radiators! Kryofluid is pumped through the LDRs to dump heat. small amount of kryofluid is lost in the process. Kryofluid is of course made from karbonite and water; 2 units of karbonite + 10 units of water = 8 units of kryofluid.
+droplet radiator calculator: http://www.5596.org/cgi-bin/dropletradiator.php
+Deployed: 1.875m wide, 7.5m long, sheds 350MW (350000 J), 2000k temperature, wedge shaped
+
+components: pump, tanks, heat exchanger
+
+
+BN-1 Radial Atomic Motor
+.625 radially mounted NTR engine.
+24kn with afterburner. Afterburner only, and 650 sec isp. But, it's radially mounted.
+
+Fusion Pellet Tank
+description = Scavanged from the finest beanbag storage tanks that have been left out in the sun too long, this tank now holds large amounts of fusion pellets for use in fusion reactors.
+
+BOT holds 6400, has 35.91 cubic meters (roughly 36000 liters)
+density LFO 0.005
+2880 liquid fuel = 14.4 mt
+3520 oxidizer = 17.6 mt
+tank mass = 4
+total mass = 36mt
+5.625 liters per unit
+
+LG pellet tank has 9.37 cubic meters (9370 liters)
+9730/5.625 = 1665.78 units
+
+mono density: .004
+Stratus V volume: .24 cubic meters (240 liters)
+Units: 150
+Units per liter: 0.625
+
+title = ZK-2000 Nuclear Salted Fizzy Water Engine
+manufacturer = Wild Blue Industries
+description = The ZK-2000 is a simple engine that takes advantage of the superheated steam created when blutonium dissolved in sparking "fizzy" water undergoes nuclear fission. Nuclear Salted Fizzy Water (NSFW) offers high thrust and excellent ISP compared to conventional rockets- even conventional atomic rockets. But the engine is banned in Kerbin's atmosphere due to its highly radioactive exhaust, not to mention its tendency to kill kerbonauts up to 2km away.
+
+title = NSFW-32 Fuel Tank
+manufacturer = Wild Blue Industries
+description = Nuclear Salted Fizzy Water (NSFW) is a highly volitile and radioactive propellant. When the dissolved blutonium undergoes nuclear fission, it heats the sparkling water into superheated steam. The fuel tank is lined with boron karbide to dampen the nuclear reactions. Warranty void if the tank ruptures.
+
+Note: to make NSFW in the field you need CarbonDioxide, Water, and blutonium. One unit of NSFW is made from .02 units of blutonium, .01 units of CarbonDioxide, and .97 units of Water.
+
+Liquid Fuel
+5 kg/l
+9 units of fuel to 11 units of oxidizer
+
+MK2 fueselage LFO
+Fuel: 135 units, 0.67 MT mass
+Oxidizer: 165 units, 0.82 MT mass
+
+LFO: 5kg per unit
+
+Shuttle Fuel Cell:
+7EC, consumes 1.81 kg of oxygen, 0.27 kg of hydrogen per hour
+
+.9 Liquid Fuel
+1.1 Oxidizer
+
+.362 units of oxidizer, 0.054 units of liquid fuel per hour
+
+1.0056e-04 units of oxidizer per second
+.000015 units of liquid fuel per second

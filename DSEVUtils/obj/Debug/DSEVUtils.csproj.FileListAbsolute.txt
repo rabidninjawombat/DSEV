@@ -1,0 +1,13 @@
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\DSEVUtils.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\DSEVUtils.pdb
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Assembly-CSharp.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\UnityEngine.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\WildBlueTools.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\TDx.TDxInput.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Mono.Cecil.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Mono.Security.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\WildBlueTools.pdb
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\obj\Debug\DSEVUtils.csprojResolveAssemblyReference.cache
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\obj\Debug\DSEVUtils.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\obj\Debug\DSEVUtils.pdb

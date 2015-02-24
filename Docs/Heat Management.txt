@@ -1,0 +1,28 @@
+ Nertea's Avatar
+
+Join Date
+    Oct 2013
+Posts
+    838	
+
+    Mhmm, you could improve your rhetoric a bit. Wouldn't say I'm unaware of any of those things.
+
+    @Streetwind: Just out of curiosity, could you be more specific as to the issues KSP seems to have with large numbers? At one point I had the largest reactor set to generate something like 16000ec/s and never noticed any issues.
+    So you have a large electrical storage system of some type. A generator creates power and an... ion engine uses it. In real life, the use and generation happen approximately concurrently. In KSP, these happen in different parts, and parts do not "do their stuff" concurrently.
+
+    Everything is fine when the storage system can handle the numbers. In one step, the generator makes 1000 Ec, in the next step the engine consumes 1000 Ec. We therefore need at least 1000 Ec of storage or else there will be an underflow - a 500 Ec battery would cap after 500 Ec was generated, and the engine would be starved, even if the generator is technically producing enough power. That's why the reactors have integrated Ec storage. This works out well enough if the numbers aren't large, but as mentioned, a 50 MW generator and associated engine would need to have at least 50,000 Ec of storage to work in KSP's system (technically it seems like things are still stable at about 65% of this number in most cases). That's already starting to look silly. Now batteries are pointless! But we're not done. The generation needs to handle 4x that at minimum to account for timewarp. The higher the numbers get, the more ridiculous the storage needs to be.
+
+    So the problem is more like one of conversion than generation. Set a part to generate large stacks of power and you won't have problems, but try to build a dependency system where that power is concurrently used and you start to see issues.
+
+    Let's take this one step further: I'm converting thermal output to a resource for reasons. Now a 50MWe reactor produces like 100 MWt. Now I'm adding twice as many resources per game tick and consuming them with radiators. Same problem but worse! If reactors overheat we get Bad Things happening, and overheating and such will need to be handled through regular timewarp. So now we might need to deal with adding up to 50,000*100,000 units per second. So how much heat storage do I need? All of the storage.
+
+    ... yeah so that's the problem with adding high numbers. And they're completely arbitrary!
+
+    2 MW reactor powers 2 MW engine and gives 100 kN thrust vs.
+    100 MW reactor powers 100 MW engine and gives 100 kN thrust.
+
+    There is no effective difference beyond changing the magnitude of a lot of numbers. All you get is into the limitations of KSP's resource system, and you break stock balance beyond imagining. See Streetwind's posts for more information on this.
+
+
+    But you know what? ModuleManager and permissive licenses are really cool, because you can do what you like . If you want to deal with the issues and change all the numbers by 100x, go for it! RO in fact has such configs, they're however designed towards *reducing* reactor power mostly . 
+
