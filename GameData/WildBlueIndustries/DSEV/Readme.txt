@@ -1,20 +1,37 @@
-Nuclear Engines
+Deep Space Exploration Vessels
 
-This zip file contains artwork and software for use as a mod for Kerbal Space Program. These designs are inspired from research provided by the Atomic Rockets website (http://www.projectrho.com/public_html/rocket/). Special thanks for Nyrath for sharing all that fantastic information.
+Inspiration
 
----ENGINES---
+This mod is inspired by several designs including:
+Discovery II: http://naca.larc.nasa.gov/search.jsp?R=20050160960
+NAUTILUS-X MMSEV (Multi-Mission Space Exploration Vehicle): http://www.scribd.com/doc/51592987/Nautilus-X-Holderman-1-26-11
+Deep Space Habitat: http://spacefellowship.com/news/art29280/constructing-next-generation-space-habitat-demonstrators.html
+The Mars One Crew Manual by Kerry mark Joels: http://www.amazon.com/The-Mars-One-Crew-Manual/dp/0345318811
 
-The mod has several new nuclear engines including:
+Additionally, the mod was inspired by Project Daedalus (http://www.bis-space.com/what-we-do/projects/project-daedalus).
 
-Nuclear Aerospike - This engine consists of a solid core oxidizer-augmented nuclear thermal rocket based upon the LANTR concept (http://www.projectrho.com/public_html/rocket/enginelist.php#lantr) and equipped with a plug nozzle. With the oxidizer augmentation "afterburner" system on, thrust increases while ISP drops, but regardless of mode, ISP has good ISP throughout the atmospheric envelope.
-
-WB-8 Supernova Fusion Engine - This engine is a hybrid fusion thermal rocket and pulsed plasma engine. It is based upon NASA's Discovery II spacecraft (http://naca.larc.nasa.gov/search.jsp?R=20050160960) as well as Project Daedalus (http://www.bis-space.com/what-we-do/projects/project-daedalus)
+Special thanks for Nyrath for sharing all that fantastic information on his Atomic Rockets website (http://www.projectrho.com/public_html/rocket/).
 
 ---INSTALLATION---
 
 Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
+
+0.3.6: Hot Fire
+- Rebranded the mod as Deep Space Exploration Vessels
+- Deprecated the Nuclear Aerospike engine
+- Added the WBR-120 Graphene Radiator
+- Added the FLM-1800 Multipurpose Storage Tank. Right-click the tank to store a variety of different resources. Right-click to change the endcaps when in the editor. This 1.875m tank fits inside the hollow octo-truss from Near Future Construction and can be radially attached.
+- The Supernova now requires radiators to function properly. You can disable heat management for the engine by right-clicking the engine and accessing the debug window.
+- The Supernova now requires 48,000 EC to start the reactor before the engine can be used. Right-click the part to start the reactor. The EC startup requirement can be disabled in the debug menu.
+- The Supernova now has a debug menu. Right-click the part to access the menu. Pressing Debug Reset will remove any overheating, clear out the heat sink, shut off the reactor, and reset a few internal variables so the engine appears as if it just left the VAB/Hangar.
+
+NOTE: Existing spacecraft built prior to 0.3.6 should not be affected by the changes but just in case, use the debug menu to disable heat management and the EC startup requirement.
+
+IMPORTANT NOTE: To install the mod, DELETE the existing GameData/WildBlueIndustries/NuclearEngine folder before installing DSEV. Be sure to copy ALL the files provided into the GameData folder.
+
+FYI: It would be a good idea for new spacecraft built with this version of the mod to stock up on SpareParts...
 
 0.3.5: Recompiled for 0.9.0 Beta. Added Modular Fuel Tanks config (thanks Kolago. :) ). Completely redesigned the mod's code to improve maintainability - I learned a LOT from Multipurpose Colony Modules!
 - Supernova now has two modes: hydrogen mode and pulsed plasma mode. Hydrogen mode burns LiquidFuel as its propellant, unless you have Near Future Propulsion (NFP) installed. If you have NFP, then hydrogen mode burns LiquidHydrogen.
@@ -32,6 +49,14 @@ Realized that MultiModeEngine only allows two fuel modes, whereas MultiFuelSwitc
 0.2: Fixed fuel gauge display bug. Finished aerospike model and textures. Added ISP and thrust modifiers to propellant list. Rebalanced engine stats based upon fuel types.
 
 0.1: Initial revision
+
+---ACKNOWLEDGEMENTS
+
+Module Manager by ialdabaot
+
+Community Resource Pack by RoverDude
+
+Portions of this codebase include source by Snjo and Swamp-IG, used under CC BY-NC SA 4.0 license
 
 ---LICENSE---
 
