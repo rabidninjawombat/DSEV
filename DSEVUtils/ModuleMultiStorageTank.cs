@@ -35,10 +35,8 @@ namespace WildBlueIndustries
         protected string sleevesObject;
         protected string bracketsObject;
         protected string decalsObject;
-        protected Dictionary<string, int> meshIndexes = new Dictionary<string, int>();
 
-
-        [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "Toggle Sleeves", active = true)]
+        [KSPEvent(guiActiveEditor = true, guiActive = false, guiName = "Toggle Sleeves", active = true)]
         public void ToggleSleeves()
         {
             ModuleMultiStorageTank storageTank;
@@ -58,7 +56,7 @@ namespace WildBlueIndustries
             }
         }
 
-        [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "Toggle Decals", active = true)]
+        [KSPEvent(guiActiveEditor = true, guiActive = false, guiName = "Toggle Decals", active = true)]
         public void ToggleDecals()
         {
             ModuleMultiStorageTank storageTank;
@@ -78,7 +76,7 @@ namespace WildBlueIndustries
             }
         }
 
-        [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "Toggle Brackets", active = true)]
+        [KSPEvent(guiActiveEditor = true, guiActive = false, guiName = "Toggle Brackets", active = true)]
         public void ToggleBrackets()
         {
             ModuleMultiStorageTank storageTank;
@@ -153,7 +151,6 @@ namespace WildBlueIndustries
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
-            string[] meshes;
 
             Events["NextMesh"].guiActive = false;
             Events["NextMesh"].active = false;
@@ -166,11 +163,6 @@ namespace WildBlueIndustries
                 showBrackets = defaultShowBrackets;
                 showDecals = defaultShowDecals;
             }
-
-            //Go through each entry and split up the entry into its template name and mesh index
-            meshes = objects.Split(';');
-            for (int index = 0; index < meshes.Count<string>(); index++)
-                meshIndexes.Add(meshes[index], index);
 
             setVisibleObjects();
         }

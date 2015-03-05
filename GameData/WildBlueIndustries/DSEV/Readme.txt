@@ -18,6 +18,9 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.3.7: Stefan-Boltzmann
+- Updated the radiator code to use the Stefan-Boltzman law of radiation. Heat convection still not supported, for that you might check out SystemHeat.
+
 0.3.6: Hot Fire
 - Rebranded the mod as Deep Space Exploration Vessels
 - Deprecated the Nuclear Aerospike engine
@@ -57,6 +60,8 @@ Module Manager by ialdabaot
 Community Resource Pack by RoverDude
 
 Portions of this codebase include source by Snjo and Swamp-IG, used under CC BY-NC SA 4.0 license
+
+Modular Fuel Tanks MM configs by Kolago.
 
 ---LICENSE---
 

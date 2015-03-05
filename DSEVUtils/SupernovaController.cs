@@ -96,7 +96,6 @@ namespace WildBlueIndustries
             vesselPartCount = -1;
             currentElectricCharge = 0f;
             reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
-            throttleFactor = 1f;
         }
 
         #endregion
@@ -179,7 +178,7 @@ namespace WildBlueIndustries
                 return;
             }
 
-            else if (reactorState == EReactorStates.Charging)
+            else if (reactorState == EReactorStates.Charging || reactorState == EReactorStates.Idling)
             {
                 reactorState = EReactorStates.Off;
                 reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart - currentElectricCharge);
@@ -204,26 +203,22 @@ namespace WildBlueIndustries
             if (reactorState != EReactorStates.Idling && reactorState != EReactorStates.Running)
             {
                 totalHeatToShed = 0f;
-                throttleFactor = 0f;
                 return;
             }
 
             if (reactorState == EReactorStates.Idling)
             {
                 totalHeatToShed *= 0.1f;
-                throttleFactor *= 0.1f;
             }
 
             else if (primaryEngine.isOperational)
             {
                 totalHeatToShed = totalHeatToShed * primaryEngine.currentThrottle;
-                throttleFactor = primaryEngine.currentThrottle;
             }
 
             else if (secondaryEngine.isOperational)
             {
                 totalHeatToShed = totalHeatToShed * secondaryEngine.currentThrottle;
-                throttleFactor = secondaryEngine.currentThrottle;
             }
 
             else
@@ -231,7 +226,6 @@ namespace WildBlueIndustries
                 reactorState = EReactorStates.Idling;
                 reactorStatus = reactorState.ToString();
                 totalHeatToShed *= 0.1f;
-                throttleFactor *= 0.1f;
             }
         }
 
@@ -244,8 +238,6 @@ namespace WildBlueIndustries
 
             if (heaterIsOn == false && (primaryEngine.staged || secondaryEngine.staged))
             {
-                ScreenMessages.PostScreenMessage("Start the reactor before using the engine.", 5.0f, ScreenMessageStyle.UPPER_CENTER);
-
                 primaryEngine.Events["Shutdown"].Invoke();
                 primaryEngine.currentThrottle = 0;
                 primaryEngine.requestedThrottle = 0;
