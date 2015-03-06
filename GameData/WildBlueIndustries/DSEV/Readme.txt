@@ -19,8 +19,9 @@ Copy the WildBlueIndustries directory into your GameData folder.
 ---REVISION HISTORY---
 
 0.3.8: You Spin Me Right Round
-- Added the Spindle and Spin Ring, based upon ZodiusInfuser/Sirkut's rotating space station hub.
-NOTE: The Spindle and Spin Ring will be unavailable unless you install Infernal Robotics.
+- Added the Spindle, Spin Ring, and Counter Torque Ring based upon ZodiusInfuser/Sirkut's rotating space station hub.
+- Added SpinHub plugin to gently accelerate/decelerate the hubs, provide context menu and Action Group support, and to prevent ship breakage when in timewarp.
+NOTE: Infernal Robotics required to make the hubs spin. Get it here: http://forum.kerbalspaceprogram.com/threads/37707-0-90-Magic-Smoke-Industries-Infernal-Robotics-0-19-3
 This was so frustrating to do, it deserves a YouTube video:https://www.youtube.com/watch?v=PGNiXGX2nLU
 
 0.3.7: Stefan-Boltzmann
