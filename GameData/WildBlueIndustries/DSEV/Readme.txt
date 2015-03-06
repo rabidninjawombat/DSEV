@@ -24,6 +24,8 @@ NOTE: This is a game breaking change, retire your current ships if they are usin
 - Added the HexPort, used for docking hexagonal truss segments together. It too will be unavailable if Near Future Construction is installed.
 - Added the Counter Torque Ring and adjusted the size of the Spindle to accomodate it.
 - Spacecraft using the Spin Ring and/or Counter Torque Ring now have a smooth acceleration/deceleration. No more breaking your ships when the centrifuge suddenly stops or starts, or when the ship comes out of timewarp!
+- Spin Ring and Counter Torque Ring will spin only if Infernal Robotics is installed.
+- Added text file containing the list of parts in the mod, the meshes they use, and the textures they use. See PartsMeshesTextures.txt for details.
 - Tweaked resource densities for Glykerol and FusionPellets to bring them in line with CRP values. Thanks Nertea for the new values and for including the resources with CRP! :)
 
 0.3.8: You Spin Me Right Round
