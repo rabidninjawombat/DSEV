@@ -56,7 +56,6 @@
     <Compile Include="AerospikeController.cs" />
     <Compile Include="ModuleEnginesFXWBI.cs" />
     <Compile Include="ModuleMultiStorageTank.cs" />
-    <Compile Include="ModuleSpinHub.cs" />
     <Compile Include="MultiFuelSwitcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SupernovaController.cs" />

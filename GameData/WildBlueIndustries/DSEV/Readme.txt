@@ -18,8 +18,13 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.3.8: You Spin Me Right Round
+- Added the Spindle and Spin Ring, based upon ZodiusInfuser/Sirkut's rotating space station hub. SpinHub plugin code is based upon and licensed from Mu/Sirkut's MuToggle code.
+TODO: Counter-torque ring; consume EC.
+This was so frustrating to do, it deserves a YouTube video:https://www.youtube.com/watch?v=PGNiXGX2nLU
+
 0.3.7: Stefan-Boltzmann
-- Updated the radiator code to use the Stefan-Boltzman law of radiation. Heat convection still not supported, for that you might check out SystemHeat.
+- Updated the radiator code to use the Stefan-Boltzman law of radiation. Heat convection still not supported, for that you might check out SystemHeat by Nertea.
 
 0.3.6: Hot Fire
 - Rebranded the mod as Deep Space Exploration Vessels
@@ -62,6 +67,10 @@ Community Resource Pack by RoverDude
 Portions of this codebase include source by Snjo and Swamp-IG, used under CC BY-NC SA 4.0 license
 
 Modular Fuel Tanks MM configs by Kolago.
+
+SpinHub code is based on MuToggle from Infernal Robotics by r4m0n/Sirkut and is licensed for non-commercial use via the GNU General Public License (GNU GPL), version 3, revision date 29 June 2007.
+
+Spindle and Spin Ring concept based upon parts by ZodiusInfuser/Sirkut.
 
 ---LICENSE---
 

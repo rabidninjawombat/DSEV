@@ -57,14 +57,14 @@ namespace WildBlueIndustries
         }
 
         [KSPAction("Start Reactor")]
-        public void StartReactor()
+        public void StartReactor(KSPActionParam param)
         {
-            StopReactor();
+            StopReactor(param);
             ToggleHeater();
         }
 
         [KSPAction("Stop Reactor")]
-        public void StopReactor()
+        public void StopReactor(KSPActionParam param)
         {
             primaryEngine.Events["Shutdown"].Invoke();
             primaryEngine.currentThrottle = 0;
@@ -91,7 +91,7 @@ namespace WildBlueIndustries
             PartResource heatSink = this.part.Resources["SystemHeat"];
             heatSink.amount = 0f;
 
-            StopReactor();
+            StopReactor(null);
             isOverheated = false;
             vesselPartCount = -1;
             currentElectricCharge = 0f;
