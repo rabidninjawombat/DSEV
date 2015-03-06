@@ -18,9 +18,16 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.3.9: It's Not A Jungle Gym
+- Added the Hexagonal Truss Segment. The truss segment is based on the design from NASA's Discovery II paper, and will be unavailable if Near Future Construction is installed.
+- Added the HexPort, used for docking hexagonal truss segments together. It too will be unavailable if Near Future Construction is installed.
+- Added the Counter Torque Ring and adjusted the size of the Spindle to accomodate it.
+- New spacecraft using the Spin Ring and/or Counter Torque Ring now have a smooth acceleration/deceleration. No more breaking your ships when the centrifuge suddenly stops or starts!
+- Tweaked resource densities for Glykerol and FusionPellets to bring them in line with CRP values. Thanks Nertea for the new values and for including the resources with CRP! :)
+
 0.3.8: You Spin Me Right Round
-- Added the Spindle and Spin Ring, based upon ZodiusInfuser/Sirkut's rotating space station hub. SpinHub plugin code is based upon and licensed from Mu/Sirkut's MuToggle code.
-TODO: Counter-torque ring; consume EC.
+- Added the Spindle and Spin Ring, based upon ZodiusInfuser/Sirkut's rotating space station hub.
+NOTE: The Spindle and Spin Ring will be unavailable unless you install Infernal Robotics.
 This was so frustrating to do, it deserves a YouTube video:https://www.youtube.com/watch?v=PGNiXGX2nLU
 
 0.3.7: Stefan-Boltzmann
@@ -61,16 +68,10 @@ Realized that MultiModeEngine only allows two fuel modes, whereas MultiFuelSwitc
 ---ACKNOWLEDGEMENTS
 
 Module Manager by ialdabaot
-
-Community Resource Pack by RoverDude
-
+Community Resource Pack by RoverDude, Nertea, and the KSP community
 Portions of this codebase include source by Snjo and Swamp-IG, used under CC BY-NC SA 4.0 license
-
 Modular Fuel Tanks MM configs by Kolago.
-
-SpinHub code is based on MuToggle from Infernal Robotics by r4m0n/Sirkut and is licensed for non-commercial use via the GNU General Public License (GNU GPL), version 3, revision date 29 June 2007.
-
-Spindle and Spin Ring concept based upon parts by ZodiusInfuser/Sirkut.
+Spindle and Spin Ring concept based upon parts by ZodiusInfuser/Sirkut. 
 
 ---LICENSE---
 

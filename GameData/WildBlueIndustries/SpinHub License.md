@@ -4,7 +4,7 @@ The complete copy of the license is attached to this document.
 ------
 SUMMARY:
 
-    MechJeb2  Copyright (C) 2013
+    SpinHub  Copyright (C) 2015
     This program comes with ABSOLUTELY NO WARRANTY!
     This is free software, and you are welcome to redistribute it
     under certain conditions, as outlined in the full content of
