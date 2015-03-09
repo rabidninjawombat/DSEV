@@ -279,7 +279,6 @@ namespace WildBlueIndustries
         public override void OnFixedUpdate()
         {
             base.OnFixedUpdate();
-            List<PartResource> pelletTanks;
             double pelletsConsumed = 0;
             double pelletsToConsume = fuelConsumption * TimeWarp.fixedDeltaTime;
             bool isFlameout = false;
@@ -338,11 +337,8 @@ namespace WildBlueIndustries
             //Consume a small amount of fusion pellets to represent the fusion reactor's operation in NTR mode.
             if (multiModeEngine.runningPrimary == true)
             {
-                //Get the pellet tanks
-                pelletTanks = ResourceHelper.GetConnectedResources(reactorFuel, this.part);
-
                 //Consume fusion pellets
-                pelletsConsumed = ResourceHelper.ConsumeResource(pelletTanks, pelletsToConsume);
+                pelletsConsumed = this.part.RequestResource(reactorFuel, pelletsToConsume);
 
                 //If we haven't consumed enough pellets then the reactor cannot be sustained
                 //and the engine flames out.
