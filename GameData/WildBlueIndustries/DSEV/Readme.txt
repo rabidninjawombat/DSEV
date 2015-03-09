@@ -18,10 +18,9 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 0.3.9: It's Not A Jungle Gym
-- Added the Hexagonal Truss. The truss segment is based on the design from NASA's Discovery II paper. 
+- Added the Hexagonal Truss. The truss segment is based on the design from NASA's Discovery II paper and sized to work with Near Future Construction's Octo-truss.
 - Added the Half-sized Hexagonal Truss. It is based on the design from NASA's Discovery II paper.
-- Added the HexPort, used for docking hexagonal truss segments together.
-NOTE: If Near Future Construction is installed, then the hexagonal truss segments and HexPort will be hidden.
+NOTE: If you have Near Future Construction installed, then the truss and half-truss will be hidden.
 - Added the WB-2 MHD Fusion Reactor.
 - Tweaked resource densities for Glykerol and FusionPellets to bring them in line with CRP values. Thanks Nertea for the new values and for including the resources with CRP! :)
 
