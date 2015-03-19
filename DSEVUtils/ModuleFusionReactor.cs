@@ -37,10 +37,15 @@ namespace WildBlueIndustries
         [KSPField(isPersistant = true)]
         public float fuelRequest;
 
-        [KSPField(isPersistant = true)]
+        [KSPField(guiActive = true)]
         public string status;
 
         protected Light[] lights;
+
+        public override string GetInfo()
+        {
+            return string.Format("Requires {0:F2}ec to start.\nProduces {1:F2} SystemHeat per second.\nConsumes {2:F4} FusionPellets per second.", ecNeededToStart, heatGenerated, fuelConsumption);
+        }
 
         public override void ToggleHeater()
         {
@@ -127,8 +132,12 @@ namespace WildBlueIndustries
 
         public override void OverheatWarning()
         {
-            base.OverheatWarning();
+            ScreenMessages.PostScreenMessage("Reactor shutting down due to overheating!", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+
             Events["ToggleReactor"].guiName = "Reactor On";
+
+            if (onOverheatDelegate != null)
+                onOverheatDelegate();
         }
 
         public override void Activate()

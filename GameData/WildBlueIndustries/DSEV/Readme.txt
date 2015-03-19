@@ -17,12 +17,17 @@ Special thanks for Nyrath for sharing all that fantastic information on his Atom
 Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
+
 0.3.9: It's Not A Jungle Gym
-- Added the Hexagonal Truss. The truss segment is based on the design from NASA's Discovery II paper and sized to work with Near Future Construction's Octo-truss.
-- Added the Half-sized Hexagonal Truss. It is based on the design from NASA's Discovery II paper.
-NOTE: If you have Near Future Construction installed, then the truss and half-truss will be hidden.
+- Added the Hexagonal Truss. The truss segment is based on the design from NASA's Discovery II paper and is sized the same as a Near Future Construction's Octo-truss by Nertea to accommodate octo-standard 1.875m by 4m truss payloads.
+- Added the Half-sized Hexagonal Truss. It is based on the design from NASA's Discovery II paper and can accommodate 1.875 by 2m truss payloads.
+- Added the HexPort hexagonal docking port. It is compatible with the Clamp-O-Tron Sr. Thank you for the tips, sumghai and nil2work!
+NOTE: MM configs hide the hex truss, half-hex truss, and HexPort if Near Future Construction is installed since NFC has a much better selection of parts. Delete the MM_Hex.cfg file in the DSEV folder if you still want to use them.
+- Added the 3.75m docking ring.
 - Added the WB-2 MHD Fusion Reactor.
-- Tweaked resource densities for Glykerol and FusionPellets to bring them in line with CRP values. Thanks Nertea for the new values and for including the resources with CRP! :)
+- Added the RT-4 ArcJet Reaction Control Thruster. It's like a Place-Anywhere 7, but it uses LiquidFuel (LiquidHydrogen if Near Future Propulsion is installed)- and a lot of power.
+- Tweaked resource densities for Glykerol and FusionPellets. Thanks Nertea for the new values!
+- Parts now support Community Tech Tree if installed.
 
 0.3.8: You Spin Me Right Round
 - Added the Spindle, Spin Ring, and Counter Torque Ring based upon ZodiusInfuser/Sirkut's rotating space station hub.

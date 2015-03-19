@@ -39,6 +39,9 @@ namespace WildBlueIndustries
         [KSPField(isPersistant = true)]
         public double currentElectricCharge = 0f;
 
+        [KSPField(isPersistant = true)]
+        public float fuelRequest;
+
         public bool requiresECToStart = true;
         public float fuelConsumption;
         public string primaryEngineID;
@@ -279,8 +282,7 @@ namespace WildBlueIndustries
         public override void OnFixedUpdate()
         {
             base.OnFixedUpdate();
-            double pelletsConsumed = 0;
-            double pelletsToConsume = fuelConsumption * TimeWarp.fixedDeltaTime;
+            float fuelPerTimeTick = fuelConsumption * TimeWarp.fixedDeltaTime;
             bool isFlameout = false;
 
             //The logic below doesn't apply unless we're flying
@@ -337,22 +339,30 @@ namespace WildBlueIndustries
             //Consume a small amount of fusion pellets to represent the fusion reactor's operation in NTR mode.
             if (multiModeEngine.runningPrimary == true)
             {
-                //Consume fusion pellets
-                pelletsConsumed = this.part.RequestResource(reactorFuel, pelletsToConsume);
-
-                //If we haven't consumed enough pellets then the reactor cannot be sustained
-                //and the engine flames out.
-                if (pelletsConsumed < pelletsToConsume)
+                //Make sure we reach the minimum threshold
+                fuelRequest += fuelPerTimeTick;
+                if (fuelRequest >= 0.01f)
                 {
-                    ScreenMessages.PostScreenMessage("Engines throttled down, out of reactor fuel!", 5.0f, ScreenMessageStyle.UPPER_CENTER);
-                    primaryEngine.Events["Shutdown"].Invoke();
-                    primaryEngine.currentThrottle = 0;
-                    primaryEngine.requestedThrottle = 0;
-                    primaryEngine.flameout = true;
-                    heaterIsOn = false;
-                    Events["ToggleHeater"].guiName = "Start Reactor";
-                    reactorState = EReactorStates.Off;
-                    reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
+                    //Consume fusion pellets
+                    float fuelObtained = this.part.RequestResource(reactorFuel, fuelRequest);
+
+                    //If we haven't consumed enough pellets then the reactor cannot be sustained
+                    //and the engine flames out.
+                    if (fuelObtained < fuelRequest)
+                    {
+                        ScreenMessages.PostScreenMessage("Engines throttled down, out of reactor fuel!", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                        primaryEngine.Events["Shutdown"].Invoke();
+                        primaryEngine.currentThrottle = 0;
+                        primaryEngine.requestedThrottle = 0;
+                        primaryEngine.flameout = true;
+                        heaterIsOn = false;
+                        Events["ToggleHeater"].guiName = "Start Reactor";
+                        reactorState = EReactorStates.Off;
+                        reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
+                    }
+
+                    //Reset the fuel request
+                    fuelRequest = 0f;
                 }
             }
         }
