@@ -34,12 +34,12 @@ namespace WildBlueIndustries
         {
             List<int> visibleObjects = new List<int>();
 
-            if (showBracing)
+            if (showBracing && bracingObject != null)
                 visibleObjects.Add(meshIndexes[bracingObject]);
 
-            if (showClosedMesh)
+            if (showClosedMesh && closedMeshObject != null)
                 visibleObjects.Add(meshIndexes[closedMeshObject]);
-            else
+            else if (openMeshObject != null)
                 visibleObjects.Add(meshIndexes[openMeshObject]);
 
             setObjects(visibleObjects);
