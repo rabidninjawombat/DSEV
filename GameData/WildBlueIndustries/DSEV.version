@@ -1,11 +1,11 @@
 {
 	"NAME":"Deep Space Exploration Vessels",
-        "URL":"https://raw.githubusercontent.com/Angel-125/DSEV/master/DSEV.version",
+        "URL":"https://raw.githubusercontent.com/Angel-125/DSEV/master/GameData/WildBlueIndustries/DSEV.version",
         "DOWNLOAD":"https://github.com/Angel-125/DSEV/releases",
         "GITHUB":
         {
-            "USERNAME":"valerian",
-            "REPOSITORY":"ksp-planetshine",
+            "USERNAME":"Angel-125",
+            "REPOSITORY":"DSEV",
             "ALLOW_PRE_RELEASE":false,
         },
 	"VERSION":
@@ -13,7 +13,7 @@
 		"MAJOR":0,
 		"MINOR":3,
 		"PATCH":9,
-		"BUILD":8
+		"BUILD":9
 	},
 	"KSP_VERSION":
 	{
