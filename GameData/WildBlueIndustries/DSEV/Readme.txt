@@ -28,7 +28,7 @@ Centrifuge
 - Added the 2.5m Spin Hub designed for surface-attaching 2.5m parts.
 
 Bug Fixes
-- Fixed an issue preventing the proper number of equipment racks from showing on the hext trusses during flight.
+- Fixed an issue preventing the proper number of equipment racks from showing on the hex trusses during flight.
 - Fixed an issue allowing the double-hex truss's center vestibule to be toggled during flight.
 
 0.3.11: Moar Jungle Gyms
