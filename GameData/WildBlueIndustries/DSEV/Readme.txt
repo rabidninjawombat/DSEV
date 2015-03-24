@@ -27,6 +27,9 @@ Centrifuge
 - Redesigned and retextured the Spindle. It remains the same height as before, but provides more room for a larger spin hub. No more primary colors!
 - Added the 2.5m Spin Hub designed for surface-attaching 2.5m parts.
 
+Other
+- Added MiniAVC support
+
 Bug Fixes
 - Fixed an issue preventing the proper number of equipment racks from showing on the hex trusses during flight.
 - Fixed an issue allowing the double-hex truss's center vestibule to be toggled during flight.
