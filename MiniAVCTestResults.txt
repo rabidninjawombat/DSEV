@@ -1,0 +1,111 @@
+[LOG 07:00:15.595] MiniAVC -> C:\KSP90\GameData\KerbalEngineer\KerbalEngineer.version
+	
+NAME: Kerbal Engineer Redux 1.0
+	URL: http://ksp-avc.cybutek.net/version.php?id=6
+	
+DOWNLOAD: NULL
+	
+GITHUB: NULL
+	
+VERSION: 1.0.13
+	
+KSP_VERSION: 0.90
+	
+KSP_VERSION_MIN: NULL
+	
+KSP_VERSION_MAX: NULL
+	
+CompatibleKspVersion: True
+	
+CompatibleKspVersionMin: True
+	
+CompatibleKspVersionMax: True
+	
+CompatibleGitHubVersion: True
+[LOG 07:00:15.600] MiniAVC -> http://ksp-avc.cybutek.net/version.php?id=6
+	
+NAME: Kerbal Engineer Redux 1.0
+	URL: http://ksp-avc.cybutek.net/version.php?id=6
+	
+DOWNLOAD: http://kerbal.curseforge.com/ksp-mods/222685-kerbal-engineer-redux
+	
+GITHUB: NULL
+	
+VERSION: 1.0.15.2
+	
+KSP_VERSION: 0.90
+	
+KSP_VERSION_MIN: NULL
+	
+KSP_VERSION_MAX: NULL
+	
+CompatibleKspVersion: True
+	
+CompatibleKspVersionMax: True
+	
+CompatibleGitHubVersion: True
+	
+UpdateAvailable: False
+[LOG 07:00:15.616] MiniAVC -> IssueGui was created.
+
+[LOG 07:00:15.994] MiniAVC -> C:\KSP90\GameData\WildBlueIndustries\DSEV.version
+	
+NAME: Deep Space Exploration Vessels
+	
+URL: https://raw.githubusercontent.com/Angel-125/DSEV/master/GameData/WildBlueIndustries/DSEV.version
+	
+DOWNLOAD: https://github.com/Angel-125/DSEV/releases
+	
+GITHUB: Angel-125/DSEV
+		
+LatestRelease: NULL
+		
+AllowPreRelease: False
+	
+VERSION: 0.3.9.8
+	
+KSP_VERSION: 0.90
+	
+KSP_VERSION_MIN: NULL
+	
+KSP_VERSION_MAX: NULL
+	
+CompatibleKspVersion: True
+	
+CompatibleKspVersionMin: True
+	
+CompatibleKspVersionMax: True
+	
+CompatibleGitHubVersion: True
+
+[LOG 07:00:15.996] MiniAVC -> https://raw.githubusercontent.com/Angel-125/DSEV/master/GameData/WildBlueIndustries/DSEV.version
+	
+NAME: Deep Space Exploration Vessels
+	
+URL: https://raw.githubusercontent.com/Angel-125/DSEV/master/GameData/WildBlueIndustries/DSEV.version
+	
+DOWNLOAD: https://github.com/Angel-125/DSEV/releases
+	
+GITHUB: Angel-125/DSEV
+		
+LatestRelease: 0.3.10
+		
+AllowPreRelease: False
+	
+VERSION: 0.3.10.1
+	
+KSP_VERSION: 0.90
+	
+KSP_VERSION_MIN: NULL
+	
+KSP_VERSION_MAX: NULL
+	
+CompatibleKspVersion: True
+	
+CompatibleKspVersionMin: True
+	
+CompatibleKspVersionMax: True
+	
+CompatibleGitHubVersion: False
+	
+UpdateAvailable: False

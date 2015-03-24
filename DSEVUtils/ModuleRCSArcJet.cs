@@ -6,7 +6,7 @@ using UnityEngine;
 using KSP.IO;
 
 /*
-Source code copyrighgt 2014, by Michael Billard (Angel-125)
+Source code copyright 2015, by Michael Billard (Angel-125)
 License: CC BY-NC-SA 4.0
 License URL: https://creativecommons.org/licenses/by-nc-sa/4.0/
 Wild Blue Industries is trademarked by Michael Billard and may be used for non-commercial purposes. All other rights reserved.
@@ -22,14 +22,16 @@ namespace WildBlueIndustries
     {
         private const float maxSoundDistance = 10.0f;
 
-        [KSPField(isPersistant = true, guiActive = true)]
+        [KSPField(isPersistant = true)]
         public string rcsEffectName;
 
-        [KSPField(isPersistant = true, guiActive = true)]
+        [KSPField(isPersistant = true)]
         public string rcsID;
 
         [KSPField(isPersistant = true)]
         public string soundFilePath;
+
+        public bool isRCSOn = false;
 
         protected FixedUpdateHelper fixedUpdateHelper;
         protected KSPParticleEmitter[] emitters;
@@ -77,13 +79,13 @@ namespace WildBlueIndustries
         {
             if (!HighLogic.LoadedSceneIsFlight)
                 return;
-            bool isRCSOn = false;
 
             //If RCS isn't activated, then just return.
             if (this.part.vessel.ActionGroups[KSPActionGroup.RCS] == false)
                 return;
 
             //Hide the default RCS thruster effects
+            isRCSOn = false;
             foreach (FXGroup thrusterFX in this.thrusterFX)
             {
                 //If at least one RCS FX power is > 0, then it means the thruster is firing.
@@ -91,6 +93,7 @@ namespace WildBlueIndustries
                 if (thrusterFX.Power > 0f)
                     isRCSOn = true;
 
+                //Set power to zero so that the built-in thruster FX won't show.
                 thrusterFX.Power = 0f;
             }
 
@@ -99,15 +102,15 @@ namespace WildBlueIndustries
             {
                 if (emitter.name.Contains(rcsEffectName))
                 {
-                    emitter.emit = isRCSOn;
-                    emitter.enabled = isRCSOn;
+                    emitter.emit = isRCSOn && rcsEnabled;
+                    emitter.enabled = isRCSOn && rcsEnabled;
                 }
             }
 
             //Play sound
             if (soundClip != null)
             {
-                if (isRCSOn && soundIsPlaying == false)
+                if (isRCSOn && rcsEnabled && soundIsPlaying == false)
                 {
                     soundClip.audio.Play();
                     soundIsPlaying = true;

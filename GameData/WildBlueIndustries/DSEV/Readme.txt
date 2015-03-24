@@ -18,6 +18,64 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.3.12: Like A Record Baby
+
+Hex Trusses
+- Added a configurable Hex Node. You can toggle the side attachment nodes and switch between open frame (default), bracing, and pressurized crew tubes.
+
+Centrifuge
+- Redesigned and retextured the Spindle. It remains the same height as before, but provides more room for a larger spin hub. No more primary colors!
+- Added the 2.5m Spin Hub designed for surface-attaching 2.5m parts.
+
+Bug Fixes
+- Fixed an issue preventing the proper number of equipment racks from showing on the hext trusses during flight.
+- Fixed an issue allowing the double-hex truss's center vestibule to be toggled during flight.
+
+0.3.11: Moar Jungle Gyms
+
+Hex Trusses
+- Added the double-sized hex truss.
+- Hex trusses have additional cross bracing to prevent eye strain. No more escher trusses!
+- Hex trusses can be toggled in the editor to have three types of end caps: Open, Braced, and Vestibule. Open is the default.
+- Hex trusses can be toggled in the editor to have 2, 3, 6, and no equipment racks. Two racks is the default.
+  NOTE: If you have 6 equipment racks then you won't be able to access any equipment installed inside the truss.
+- Hex trusses can be hidden if you have Near Future Construction installed (which has a better selection of trusses). simply rename MM_Hex.txt to MM_Hex.cfg.
+
+FLM-1800 Multipurpose Storage Tank
+- To prevent accidental dumping of resources during flight, the storage tank now requires a confirmation click to change the stored resource type.
+
+Docking Ports
+- The glow-rings on the HexPort and 3.75m Docking Ring can now be toggled in flight or in the editor.
+
+Supernova
+- If the Supernova is staged before starting the reactor, then the reactor will be automatically started and the capacitor will begin charging.
+- After the capacitor is fully charged, the engine will automatically activate.
+- If the Supernova can't get enough electric charge while charging the reactor, then it will switch off the reactor to prevent the ship from becoming E.C. starved.
+- The Start Reactor button has been renamed Start Engine.
+- The Stop Reactor button has been renamed Shutdown Engine.
+- Added engine temperature readout in Celsius.
+- Removed the Activate button from the context menu.
+- Removed extra Shutdown Engine button from the context menu.
+- Removed the automatic mode switching button from the context menu.
+
+Other
+- Removed the Nuclear Aerospike. Be sure to retire any spacecraft that use the aerospike before installing this update.
+
+Bug Fixes
+- Fixed an issue with the Supernova where staging to activate the engine before starting the reactor would cause the engine to overheat. Thanks for the debug logs, Kamuchi! :)
+- Fixed an issue where the Supernova could be activated without starting the reactor, thus bypassing heat management. Thanks for the playtest, BuzZBladE! :)
+- Synchronized ship-wide heat generation and heat radiation via a centralized heat manager. This might actually improve performance as well. 
+  NOTE: radiators will still have different temperatures due to the way the game heats up nearby parts and dissipates heat.
+- Fixed an issue preventing the ArcJet RCS Thruster from firing when a ship is equipped with fuel pipes.
+- The WB-120 GrapheneRadiator now shows temperature in Celsius instead of Kelvin. It actually already was showing Celsius, but the label said Kelvin. No more temperatures below absolute zero!
+- The 3.75m docking ring now shows the correct names for the variant button (Open, Vestibule), and no longer shows the Previous Variant button.
+- Fixed an issue where the 3.75m docking ring would show the variant button while in flight.
+
+Special thanks to DasValdez, Kamuchi, BuzZBladE and the viewers of KSPTV for providing vital feedback and testing. It really helped to see the mod in use and to see what worked and what needed improvements. :)
+
+0.3.10: Bug Fixes
+- Added safety feature to prevent heat radiators from exploding when they take on too much heat from reactors and engines.
+
 0.3.9: It's Not A Jungle Gym
 - Added the Hexagonal Truss. The truss segment is based on the design from NASA's Discovery II paper and is sized the same as a Near Future Construction's Octo-truss by Nertea to accommodate octo-standard 1.875m by 4m truss payloads.
 - Added the Half-sized Hexagonal Truss. It is based on the design from NASA's Discovery II paper and can accommodate 1.875 by 2m truss payloads.
@@ -76,7 +134,8 @@ Module Manager by ialdabaot
 Community Resource Pack by RoverDude, Nertea, and the KSP community
 Portions of this codebase include source by Snjo and Swamp-IG, used under CC BY-NC SA 4.0 license
 Modular Fuel Tanks MM configs by Kolago.
-Spindle and Spin Ring concept based upon parts by ZodiusInfuser/Sirkut. 
+Spindle and Spin Ring concept based upon parts by ZodiusInfuser/Sirkut.
+Special thanks to DasValdez, Kamuchi, BuzZBladE and the viewers of KSPTV for providing vital feedback and testing. It really helped to see the mod in use and to see what worked and what needed improvements. :)
 
 ---LICENSE---
 

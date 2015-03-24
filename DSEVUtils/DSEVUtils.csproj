@@ -40,9 +40,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\SteamApps\common\Kerbal Space Program\KSP_x64_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="InfernalRobotics">
-      <HintPath>..\..\..\..\..\KSP90\GameData\MagicSmokeIndustries\Plugins\InfernalRobotics.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -58,7 +55,9 @@
   <ItemGroup>
     <Compile Include="ModuleEnginesFXWBI.cs" />
     <Compile Include="ModuleFusionReactor.cs" />
+    <Compile Include="ModuleHexNode.cs" />
     <Compile Include="ModuleHexPort.cs" />
+    <Compile Include="ModuleHexTruss.cs" />
     <Compile Include="ModuleMultiStorageTank.cs" />
     <Compile Include="ModuleRCSArcJet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
