@@ -24,8 +24,7 @@ Hex Trusses
 - Added a configurable Hex Node. You can toggle the side attachment nodes and switch between open frame (default), bracing, and pressurized crew tubes.
 
 Centrifuge
-- Redesigned and retextured the Spindle. It remains the same height as before, but provides more room for a larger spin hub. No more primary colors!
-- Added the 2.5m Spin Hub designed for surface-attaching 2.5m parts.
+- Retextured the Spindle. No more primary colors!
 
 Other
 - Added MiniAVC support
