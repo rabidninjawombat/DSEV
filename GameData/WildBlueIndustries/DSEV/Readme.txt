@@ -18,6 +18,9 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.3.13: Broken Wings (https://youtu.be/nKhN1t_7PEY)
+- Truncated the Large Graphene Radiator to 3 segments instead of 5.
+
 0.3.12: Like A Record Baby
 
 Hex Trusses
