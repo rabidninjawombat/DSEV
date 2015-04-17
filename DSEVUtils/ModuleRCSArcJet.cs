@@ -115,7 +115,7 @@ namespace WildBlueIndustries
                     soundClip.audio.Play();
                     soundIsPlaying = true;
                 }
-                else if (isRCSOn == false)
+                else if (isRCSOn == false || rcsEnabled == false)
                 {
                     soundClip.audio.Stop();
                     soundIsPlaying = false;

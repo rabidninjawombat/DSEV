@@ -177,7 +177,7 @@ namespace WildBlueIndustries
             else
             {
                 Events["ToggleCenterVestibule"].guiActiveEditor = true;
-                Events["ToggleCenterVestibule"].guiActive = true;
+                Events["ToggleCenterVestibule"].guiActive = false;
                 Events["ToggleCenterVestibule"].active = true;
             }
 

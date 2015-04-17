@@ -50,7 +50,7 @@ namespace WildBlueIndustries
                 Events["TogglePressurized"].guiName = "Pressurized";
         }
 
-        [KSPEvent(guiActiveEditor = true, guiName = "Toggle bracing")]
+        [KSPEvent(guiActiveEditor = true, guiActive = false, guiName = "Toggle bracing")]
         public void ToggleBracing()
         {
             showBracing = !showBracing;
@@ -70,7 +70,7 @@ namespace WildBlueIndustries
             }
         }
 
-        [KSPEvent(guiActiveEditor = true, guiName = "Pressurized")]
+        [KSPEvent(guiActiveEditor = true, guiActive = false, guiName = "Pressurized")]
         public void TogglePressurized()
         {
             showClosedMesh = !showClosedMesh;

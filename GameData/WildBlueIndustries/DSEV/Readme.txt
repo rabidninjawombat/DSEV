@@ -18,8 +18,17 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.3.14: Tanks For Experimentals
+- Added the FLM-100 radial storage tank. It slipped into the last update, so it's now officially ready for use.
+- Deprecated the WB-120 radial fusion pellet tank.
+- Removed the SpareParts storage template. Fixing DSEV vessels will require RocketParts (which, if you have Extraplanetary Launchpads, can be used to build rockets).
+- Fixed an issue where the ArcJet RCS would still act like it is firing even when disabled.
+- Fixed an issue where the HexPort allowed you to toggle the vestibule while in flight.
+- Fixed an issue where the double hex truss allowed you to toggle the center vestibule while in flight.
+
 0.3.13: Broken Wings (https://youtu.be/nKhN1t_7PEY)
 - Truncated the Large Graphene Radiator to 3 segments instead of 5.
+NOTE: With the smaller radiator size, you'll need 14 radiators instead of 10 to cool the Supernova at full thrust. Be sure to build new ships accordingly.
 
 0.3.12: Like A Record Baby
 

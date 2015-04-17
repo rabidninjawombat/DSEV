@@ -1,20 +1,8 @@
 small radiator
 1.25m fusion reactor
 0.625m fusion reactor
-6-way hex truss assembly, ability to turn off nodes
-trusses with toggleable end caps: Vestibule, Bracing, Open
-Trusses have 2, 3, and 6 sides
-Symmetrical bracing on the hex truss
-double-sized hex truss
-
-MM_Hex is an optional config that is installed
-
-Remove yellow on counter torque
-Remove blue on endcaps, make more stock
-
-radiators need status (blocked by)
-
-RCS manually pulls EC from ship
-
-stage engine and the ship overheats
-activate via right click and the system does not overheat
+variable mass ballast on docking ports and variable mass ballast (suggestion by Publicsafetydan)
+variable thrust power on RCS
+5-way RCS, half as powerful as single? masses .2
+RCS action groups: On, Off, Toggle
+Reduce pellet consumption?
