@@ -86,11 +86,13 @@ namespace WildBlueIndustries
             else if (heaterIsOn == false)
                 status = "Off";
             else
-                status = "Running";
+                status = "Output: " + ecProduced + "EC/sec";
         }
 
         public override void OnFixedUpdate()
         {
+            PartResource ecReserve = this.part.Resources["ElectricCharge"];
+
             if (HighLogic.LoadedSceneIsEditor)
                 return;
 
@@ -99,6 +101,10 @@ namespace WildBlueIndustries
 
             if (heaterIsOn)
             {
+                //If the EC reserve is full then run the reactor in idle mode to consume fewer resources.
+                if (ecReserve.amount == ecReserve.maxAmount)
+                    fuelPerTimeTick = fuelPerTimeTick / 10.0f;
+
                 //Consume reactor fuel. There seems to be a minimum amount to request.
                 fuelRequest += fuelPerTimeTick;
                 if (fuelRequest >= 0.01f)

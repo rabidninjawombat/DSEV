@@ -2,7 +2,5 @@ small radiator
 1.25m fusion reactor
 0.625m fusion reactor
 variable mass ballast on docking ports and variable mass ballast (suggestion by Publicsafetydan)
-variable thrust power on RCS
-5-way RCS, half as powerful as single? masses .2
-RCS action groups: On, Off, Toggle
-Reduce pellet consumption?
+variable thrust power on RCS?
+12 radiators to keep Supernova cool

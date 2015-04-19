@@ -18,7 +18,19 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
-0.3.14: Tanks For Experimentals
+0.3.15: Moar Thrusters
+- Improved engine thrust on the Supernova. Hydrogen mode thrust has been increased to 900, up from 600. Pulsed Plasma mode is now 650, up from 150.
+- Supernova now consumes fewer FusionPellets when idling.
+- WB-2 reactor will start idling when its EC resource is full. When idling, it consumes fewer pellets.
+- The WB-2 reactor shows how much EC it produces when running.
+- Added the RT-5 ArcJet RCS Thruster. It offers RCS thrust in 5 directions for more epicness.
+- Reduced the thrust power on the ArcJet RCS thrusters to 1.2kn (half what it was before and more in line with stock RCS).
+- ArcJets require 150 EC/sec.
+- The ArcJet RCS thrusters can be started, stopped, and toggled through Action Groups.
+- Added the WBR-12M Radiator, a small radiator for the fusion reactor. It needs more artwork but it is functional.
+- Radiators now measure in terms of Celsius (C) instead of speed of light (c). It's still better than negative Kelvin... ;)
+
+0.3.14: Tanks For The Memories 0.90
 - Added the FLM-100 radial storage tank. It slipped into the last update, so it's now officially ready for use.
 - Deprecated the WB-120 radial fusion pellet tank.
 - Removed the SpareParts storage template. Fixing DSEV vessels will require RocketParts (which, if you have Extraplanetary Launchpads, can be used to build rockets).

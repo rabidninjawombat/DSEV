@@ -21,6 +21,7 @@ namespace WildBlueIndustries
     public class ModuleRCSArcJet : ModuleRCS
     {
         private const float maxSoundDistance = 10.0f;
+        private const double kDefaultECRequired = 150;
 
         [KSPField(isPersistant = true)]
         public string rcsEffectName;
@@ -31,13 +32,49 @@ namespace WildBlueIndustries
         [KSPField(isPersistant = true)]
         public string soundFilePath;
 
+        [KSPField(guiActive = true)]
         public bool isRCSOn = false;
+
+        [KSPField(isPersistant = true)]
+        public double ecRequired = kDefaultECRequired;
 
         protected FixedUpdateHelper fixedUpdateHelper;
         protected KSPParticleEmitter[] emitters;
 
         public FXGroup soundClip = null;
         protected bool soundIsPlaying = false;
+
+        [KSPAction("RCS On")]
+        public void ActionRCSOn(KSPActionParam param)
+        {
+            rcsEnabled = true;
+        }
+
+        [KSPAction("RCS Off")]
+        public void ActionRCSOff(KSPActionParam param)
+        {
+            rcsEnabled = false;
+
+            DeactivateFX();
+        }
+
+        [KSPAction("Toggle RCS")]
+        public void ActionRCSToggle(KSPActionParam param)
+        {
+            rcsEnabled = !rcsEnabled;
+
+            if (rcsEnabled == false)
+                DeactivateFX();
+        }
+
+        public override string GetInfo()
+        {
+            string baseInfo = base.GetInfo();
+
+            baseInfo += "- <b>ElectricCharge: </b>" + ecRequired + "/sec. Max.";
+
+            return baseInfo;
+        }
 
         public override void OnStart(StartState state)
         {
@@ -54,6 +91,9 @@ namespace WildBlueIndustries
             //Load the sound clip
             if (string.IsNullOrEmpty(soundFilePath) == false)
                 LoadSoundFX();
+
+            if (ecRequired == 0)
+                ecRequired = kDefaultECRequired;
         }
 
         public void LoadSoundFX()
@@ -75,39 +115,28 @@ namespace WildBlueIndustries
             soundClip.audio.playOnAwake = false;
         }
 
-        public void OnUpdateFixed()
+        public void DeactivateFX()
         {
-            if (!HighLogic.LoadedSceneIsFlight)
-                return;
-
-            //If RCS isn't activated, then just return.
-            if (this.part.vessel.ActionGroups[KSPActionGroup.RCS] == false)
-                return;
-
-            //Hide the default RCS thruster effects
-            isRCSOn = false;
-            foreach (FXGroup thrusterFX in this.thrusterFX)
-            {
-                //If at least one RCS FX power is > 0, then it means the thruster is firing.
-                //Power will be 0 if the thruster isn't firing.
-                if (thrusterFX.Power > 0f)
-                    isRCSOn = true;
-
-                //Set power to zero so that the built-in thruster FX won't show.
-                thrusterFX.Power = 0f;
-            }
-
-            //Light up the emitters
             foreach (KSPParticleEmitter emitter in emitters)
             {
                 if (emitter.name.Contains(rcsEffectName))
                 {
-                    emitter.emit = isRCSOn && rcsEnabled;
-                    emitter.enabled = isRCSOn && rcsEnabled;
+                    emitter.emit = false;
+                    emitter.enabled = false;
                 }
             }
 
-            //Play sound
+            if (soundClip != null)
+            {
+                soundClip.audio.Stop();
+                soundIsPlaying = false;
+            }
+
+            isRCSOn = false;
+        }
+
+        public void PlayOrStopSoundFX()
+        {
             if (soundClip != null)
             {
                 if (isRCSOn && rcsEnabled && soundIsPlaying == false)
@@ -121,7 +150,65 @@ namespace WildBlueIndustries
                     soundIsPlaying = false;
                 }
             }
+        }
 
+        public void ShowActiveRCSFX()
+        {
+            FXGroup thrusterFX;
+            KSPParticleEmitter particleEmitter;
+
+            isRCSOn = false;
+            for (int thrusterIndex = 0; thrusterIndex < this.thrusterFX.Count; thrusterIndex++)
+            {
+                thrusterFX = this.thrusterFX[thrusterIndex];
+                particleEmitter = emitters[thrusterIndex];
+
+                //Shut down the emitters
+                particleEmitter.emit = false;
+                particleEmitter.enabled = false;
+
+                //Activate the emitter that's on.
+                if (thrusterFX.Active && (thrusterFX.Power > this.thrusterPower / 2.0f))
+                {
+                    isRCSOn = true;
+                    particleEmitter.emit = true;
+                    particleEmitter.enabled = true;
+                    Debug.Log("RCS is on");
+                }
+            }
+        }
+
+        public void OnUpdateFixed()
+        {
+            if (!HighLogic.LoadedSceneIsFlight)
+                return;
+
+            //If RCS isn't activated, then just make sure the effects are switched off.
+            if (this.part.vessel.ActionGroups[KSPActionGroup.RCS] == false || rcsEnabled == false)
+            {
+                DeactivateFX();
+                return;
+            }
+
+            //Light up the appropriate RCS emitters.
+            ShowActiveRCSFX();
+
+            //If RCS is on and enabled, then consume electricity
+            if (isRCSOn)
+            {
+                double ecPerTimeTick = ecRequired * TimeWarp.fixedDeltaTime;
+                double ecSupplied = this.part.vessel.rootPart.RequestResource("ElectricCharge", ecPerTimeTick);
+
+                if (ecSupplied < ecPerTimeTick)
+                {
+                    Debug.Log("Not enough EC, shutting off RCS");
+                    DeactivateFX();
+                    return;
+                }
+            }
+
+            //Play sound
+            PlayOrStopSoundFX();
         }
     }
 }

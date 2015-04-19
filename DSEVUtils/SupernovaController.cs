@@ -308,21 +308,7 @@ namespace WildBlueIndustries
 
             if (manageHeat == false)
                 return;
-/*
-            if (heaterIsOn == false && (primaryEngine.staged || secondaryEngine.staged))
-            {
-                primaryEngine.Events["Shutdown"].Invoke();
-                primaryEngine.currentThrottle = 0;
-                primaryEngine.requestedThrottle = 0;
 
-                secondaryEngine.Events["Shutdown"].Invoke();
-                secondaryEngine.currentThrottle = 0;
-                secondaryEngine.requestedThrottle = 0;
-
-                if (reactorState != EReactorStates.Charging)
-                    Events["ToggleHeater"].guiName = kStartEngine;
-            }
-*/
             engineTemperature = String.Format("{0:#.##}c", this.part.temperature);
         }
 
@@ -356,6 +342,10 @@ namespace WildBlueIndustries
             base.OnFixedUpdate();
             float fuelPerTimeTick = fuelConsumption * TimeWarp.fixedDeltaTime;
 
+            //Adjust fuel consuption for idling
+            if (primaryEngine.thrustPercentage == 0f && secondaryEngine.thrustPercentage == 0f)
+                fuelPerTimeTick = fuelPerTimeTick / 10.0f;
+
             //The logic below doesn't apply unless we're flying
             if (!HighLogic.LoadedSceneIsFlight)
                 return;
@@ -375,7 +365,7 @@ namespace WildBlueIndustries
                 if (fuelRequest >= 0.01f)
                 {
                     //Consume fusion pellets
-                    float fuelObtained = this.part.RequestResource(reactorFuel, fuelRequest);
+                    float fuelObtained = this.part.vessel.rootPart.RequestResource(reactorFuel, fuelRequest);
 
                     //If we haven't consumed enough pellets then the reactor cannot be sustained
                     //and the engine flames out.
