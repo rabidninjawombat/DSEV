@@ -35,6 +35,7 @@ namespace WildBlueIndustries
         const string kOutOfFuel = "Engines throttled down, out of reactor fuel!";
         const string kOutOfEC = "Stopping the reactor, can't get enough electricity to charge.";
         const string kChargingCapacitor = "Charging capacitor before engine start...";
+        const string kOverheated = "Overheated";
 
         protected MultiModeEngine multiModeEngine;
         protected ModuleEnginesFXWBI primaryEngine;
@@ -106,9 +107,6 @@ namespace WildBlueIndustries
 
         public void DebugReset()
         {
-            PartResource heatSink = this.part.Resources["SystemHeat"];
-            heatSink.amount = 0f;
-
             StopReactor(null);
             isOverheated = false;
             currentElectricCharge = 0f;
@@ -309,7 +307,7 @@ namespace WildBlueIndustries
             if (manageHeat == false)
                 return;
 
-            engineTemperature = String.Format("{0:#.##}c", this.part.temperature);
+            engineTemperature = String.Format("{0:#.##}C", this.part.temperature);
         }
 
         public override void HeaterHasCooled()
@@ -321,6 +319,8 @@ namespace WildBlueIndustries
 
         public override void OverheatWarning()
         {
+            isOverheated = true;
+            heaterIsOn = false;
             ScreenMessages.PostScreenMessage(kOverheatWarning, 5.0f, ScreenMessageStyle.UPPER_CENTER);
 
             primaryEngine.Events["Shutdown"].Invoke();
@@ -334,6 +334,7 @@ namespace WildBlueIndustries
             Events["ToggleHeater"].guiName = kStartEngine;
 
             reactorState = EReactorStates.Overheated;
+            reactorStatus = kOverheated;
             currentElectricCharge = 0f;
         }
 
@@ -388,18 +389,18 @@ namespace WildBlueIndustries
             }
         }
 
-        public override void  ManageHeat(List<WBIRadiator> radiators)
+        public override float GenerateHeat()
         {
-            base.ManageHeat(radiators);
+            base.GenerateHeat();
             bool isFlameout = false;
 
             //The logic below doesn't apply unless we're flying
             if (!HighLogic.LoadedSceneIsFlight)
-                return;
+                return 0f;
 
             //If reactor is off then exit
-            if (reactorState == EReactorStates.Off)
-                return;
+            if (reactorState == EReactorStates.Off || reactorState == EReactorStates.Overheated)
+                return 0f;
 
             //If we've flamed out then idle the reactor
             else if (reactorState == EReactorStates.Running)
@@ -416,7 +417,7 @@ namespace WildBlueIndustries
                     primaryEngine.currentThrottle = 0;
                     primaryEngine.requestedThrottle = 0;
                     reactorState = EReactorStates.Idling;
-                    return;
+                    return 0f;
                 }
             }
 
@@ -431,19 +432,20 @@ namespace WildBlueIndustries
                 {
                     ScreenMessages.PostScreenMessage(kOutOfEC, 5.0f, ScreenMessageStyle.UPPER_CENTER);
                     StopReactor(null);
-                    return;
+                    return 0f;
                 }
 
                 if (currentElectricCharge < ecNeededToStart)
                 {
                     reactorStatus = EReactorStates.Charging.ToString() + String.Format(" {0:F2}%", (currentElectricCharge / ecNeededToStart) * 100);
-                    return;
+                    return 0f;
                 }
 
                 //If we have enough charge then we can start the engine.
                 heaterIsOn = true;
                 currentElectricCharge = 0f;
-                Events["ToggleHeater"].guiName = kShutdownEngine;
+                if (Events.Contains("ToggleHeater"))
+                    Events["ToggleHeater"].guiName = kShutdownEngine;
                 if (multiModeEngine.runningPrimary)
                     primaryEngine.Activate();
                 else
@@ -456,6 +458,8 @@ namespace WildBlueIndustries
             else if (isOverheated == false)
                 reactorState = EReactorStates.Idling;
             reactorStatus = reactorState.ToString();
+
+            return totalHeatToShed;
         }
 
         #endregion

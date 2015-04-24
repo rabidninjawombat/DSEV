@@ -18,6 +18,15 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.3.17: Maddening Heat Part 2
+- Recompiled for KSP 1.0
+- Redesigned the heat management system; no more exploding radiators!*
+- Fixed an issue with the ArcJet RCS thrusters not shutting off via action groups.
+* Unless you do something like enter the atmosphere...
+
+0.3.16: Maddening Heat Part 1
+- Temporarily disabled heat management while I'm redesigning the heat management system. It will be back for 1.0
+
 0.3.15: Moar Thrusters
 - Improved engine thrust on the Supernova. Hydrogen mode thrust has been increased to 900, up from 600. Pulsed Plasma mode is now 650, up from 150.
 - Supernova now consumes fewer FusionPellets when idling.

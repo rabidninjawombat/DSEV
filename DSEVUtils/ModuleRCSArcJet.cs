@@ -58,15 +58,6 @@ namespace WildBlueIndustries
             DeactivateFX();
         }
 
-        [KSPAction("Toggle RCS")]
-        public void ActionRCSToggle(KSPActionParam param)
-        {
-            rcsEnabled = !rcsEnabled;
-
-            if (rcsEnabled == false)
-                DeactivateFX();
-        }
-
         public override string GetInfo()
         {
             string baseInfo = base.GetInfo();

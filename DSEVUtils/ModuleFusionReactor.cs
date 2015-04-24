@@ -47,6 +47,12 @@ namespace WildBlueIndustries
             return string.Format("Requires {0:F2}ec to start.\nProduces {1:F2} SystemHeat per second.\nConsumes {2:F4} FusionPellets per second.", ecNeededToStart, heatGenerated, fuelConsumption);
         }
 
+        public override void ToggleHeaterAction(KSPActionParam param)
+        {
+            base.ToggleHeaterAction(param);
+            ScreenMessages.PostScreenMessage("Reactor online.", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+        }
+
         public override void ToggleHeater()
         {
             double ecObtained = 0f;
@@ -138,9 +144,12 @@ namespace WildBlueIndustries
 
         public override void OverheatWarning()
         {
+            isOverheated = true;
+            heaterIsOn = false;
+
             ScreenMessages.PostScreenMessage("Reactor shutting down due to overheating!", 5.0f, ScreenMessageStyle.UPPER_CENTER);
 
-            Events["ToggleReactor"].guiName = "Reactor On";
+            Events["ToggleHeater"].guiName = "Reactor On";
 
             if (onOverheatDelegate != null)
                 onOverheatDelegate();

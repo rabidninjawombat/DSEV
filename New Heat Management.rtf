@@ -1,0 +1,132 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1347\cocoasubrtf570
+{\fonttbl\f0\fnil\fcharset0 Consolas;}
+{\colortbl;\red255\green255\blue255;\red38\green38\blue38;\red148\green6\blue75;}
+\margl1440\margr1440\vieww14780\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+Heat manager tallies up the total heat and it distributes that heat to all the radiators. Heat manager categorizes the radiators by capacity and distributes accordingly.\
+\
+If we aren\'92t overheating:\
+1. Ask all heaters to GenerateHeat, and record the total.\
+2. For each radiator in a category, tally the number of radiators that are active (radiatorCapacity > 0).\
+3. Multiply the category heat capacity by the number of active radiators.\
+4. Subtract result from step 3 from the total heat generated.\
+5. TransferHeat to each radiator (the active ones will set up their radiator color and nothing more).\
+6. Repeat steps 2 through 6 until we\'92ve gone through all the radiator categories.\
+7. If the total heat generated is > 0, then we are overheating.\
+8. If we are overheating, then tell all the heaters and radiators.\
+\
+If we are overheating:\
+1. Ask all radiators if iisOverheated\
+2. If all radiators have cooled down, then tell all heaters that we have cooled down.\
+3. Record the fact that we are no longer overheating.\
+\
+After above:\
+1. Tell all radiators to ManageHeat (which is where we set radiator color).\
+\
+Small radiators: heatCapacity = 5.0\
+Large radiators: heatCapacity = 101\
+\
+12 large radiators cover one supernova and one fusion reactor\
+Supernova Heat generated: 1200\
+Fusion Reactor Heat generated: 60\
+Large Radiator heat capacity: 105\
+Small Radiator heat capacity: 15\
+\
+WBIHeater\'92s GetInfo returns heat generated.\
+WBIRadiator\'92s GetInfo returns heat radiated. These numbers are in terms of units.\
+\
+float curLerp = 0f;\
+float lerpHeatRate = 0.1f;\
+float lerpCoolRate = 0.01f;\
+float lerpTime = 1.0f;\
+float curHeatRatio = 0f;\
+float targetHeatRatio = 0f;\
+\
+public void ManageHeat()\
+float lerpPercent = 0f;\
+\
+if (radiatorState == ERadiatorStates.HeatTransferHeating)\
+  curLerp += Time.fixedDeltaTime * lerpHeatRate;\
+else\
+  curLerp += Time.fixedDeltaTime * lerpCoolRate;\
+\
+\pard\pardeftab720
+\cf3 \expnd0\expndtw0\kerning0
+if\cf2 \expnd0\expndtw0\kerning0
+ (curLerp > lerpTime)\
+    curLerp = lerpTime;\
+\
+lerpPercent = curLerp / lerpTime;\
+\
+if (radiatorState == ERadiatorStates.HeatTransferHeating)\
+curHeatRatio = Mathf.Lerp(startingHeatRatio, targetHeatRatio, lerpPercent);\
+else\
+curHeatRatio = Mathf.Lerp(targetHeatRatio, startingHeatRatio, lerpPercent);\
+\
+SetRadiatorColor();\
+\
+***\
+\
+TransferHeat(float heatToTransfer)\
+\{\
+if (radiatorState == ERadiatorStates.CoolingOff)\
+return 0;\
+\
+if (heatToTransfer == targetHeat)\
+return 0;\
+\
+if (heatToTransfer > targetHeat)\
+radiatorState = ERadiatorStates.HeatTransferHeating;\
+\
+else\
+radiatorState = ERadiatorStates.HeatTransferCooling;\
+\
+targetHeat = heatToTransfer;\
+startingHeatRatio = curHeatRatio;\
+targetHeatRatio = heatToTransfer / heatCapacity;\
+\
+\}\
+\
+public property bool isOverheated\
+\{\
+get\
+\{\
+if (curHeatRatio == 0f)\
+\{\
+radiatorState = ERadiatorStates.Idle;\
+return false;\
+\}\
+\
+return true;\
+\}\
+\
+set\
+\{\
+if (value == true)\
+\{\
+radiatorState = ERadiatorStates.CoolingOff;\
+startingHeatRatio = curHeatRatio;\
+targetHeatRatio = 0f;\
+\}\
+\
+else\
+\{\
+radiatorState = ERadiatorStates.Idle;\
+\}\
+\}\
+\}\
+\
+public property float radiatorCapacity\
+\{\
+get\
+\{\
+if (state.EXTENDED)\
+return heatCapacity;\
+else\
+return 0f;\
+\}\
+\}\
+}
