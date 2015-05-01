@@ -1,0 +1,112 @@
+Engines
+- Added the ArcJet Engine Cluster, a 0.625m engine that can be stacked or radially attached. It needs 600EC/sec, so be sure to equip you craft with adequate electrical generation.
+
+- Redesigned the heat management system; you still get the nice glowing panels, and without enough of them your engines and reactors shut down.
+
+- Textures are now saved in DDS format to improve load times.
+
+
+
+externalTemperature (Temp Ext): the ambient temperatue
+thermalMass: (dryMass * standardSpecificHeatCapacity *thermalMassModifier) + (resourceMass * hsp)
+
+
+physics.cfg
+partEmissivityExponent = 4
+radiationFactor = 1
+convectionFactor = 40
+newtonianConvectionFactorBase = 1
+newtonianConvectionFactorTotal = 1
+conductionFactor = 10
+internalHeatProductionFactor = 0.03
+aerodynamicHeatProductionFactor = 1
+standardSpecificHeatCapacity = 800
+
+Red Iron Crown
+
+Thermal mass is the capacity of the part to absorb heat, i.e. the specific heat of the material times the mass of the part. It takes more heat to raise the temperature of a part by a given amount if it has a higher thermal mass. So parts with higher thermal mass change temperature more slowly than those with a lower thermal mass, both upwards and downwards.
+
+Radiative area is the theoretical area that emits or absorbs radiated heat. Parts emit heat when in shadow and absorb it when in sunlight (at least I think this is modelled). Parts with a larger radiative area gain or lose heat faster than those with smaller radiative areas. 
+
+As I understand it:
+- All parts has a default specific heat of 800 kJ/tonne-Kelvin defined in Physics.cfg in the root folder (standardSpecificHeatCapacity)
+- Parts can have that modified in their cfgs by a multiplier (thermalMassModifier, setting this to 2 would double specific heat)
+- Resources also have their own specific heats defined in ResourcesGeneric.cfg in Gamedata/Squad/Resources (hsp)
+- Part thermal mass thus should be (dryMass * standardSpecificHeatCapacity *thermalMassModifier) + (resourceMass * hsp) <- Repeat last section for each resource within the part. Units are kJ/K.
+
+Have a poke around the Physics.cfg file in the root of your KSP install, there's some interesting stuff in there. 
+
+Large Radiator mass: 0.5t
+standardSHC: 800
+thermalMassModifier: 10
+thermalMass: 0.5 * 800 * 10 = 4000
+Temperature increase = heat (watts) / thermalMass
+
+radiator extended has larger radiative flux
+
+public double heatConductivity;
+public double heatConvectiveConstant;
+public double radiativeArea;
+public double resourceThermalMass;
+public double temperature;
+
+
+These three parameters are the heat transfer, in kilowatts, of the part, into the environment. Negative values must mean that heat is going out of the part.
+thermalConductionFlux;
+thermalConvectionFlux;
+thermalRadiationFlux;
+
+These parameters are the kilowatts of heat transfer that goes between parts.
+thermalInternalFlux;
+thermalInternalFluxPrevious;
+
+Thermal mass of the part:
+thermalMass: (dryMass * standardSpecificHeatCapacity *thermalMassModifier) + (resourceMass * resourceSpecificHeatCapacity) //Thanks Red Iron Crown!
+
+For my radiator with thermalMassModifier = 4.475 and dryMass = 0.5### and no resources:
+thermalMass = 0.5 tonnes * 800 * 4.475 = 1,790 KJ/K (confirmed in game)
+I based my thermalMassModifier on lithium's specific heat capacity of 3.58 KJ/Kg-K (3850 KJ/tonne-K)
+### I suppose I could also have 0.5tonnes of lithium as a coolant resource, brilliantly named Coolant.
+
+So, thermal energy = thermalMass (KJ/K) * temperature (K)
+If my radiator is at 1000 K, then my thermal energy = 1790 * 1000 = 1,790,000 KJ
+If my radiator's maximum temperature is 2400K, and we have a "working temperature" of 0.85 of that, then the maximum thermal energy that the radiator can take on is:
+2400 * 0.85 * 1790 = 3,651,600 KJ
+
+
+These are in kilowatts (kJ/sec)
+NathanKell
+//negative values indicate heat is going out of the part and into the environment.
+public double thermalConductionFlux;
+public double thermalConvectionFlux;
+public double thermalRadiationFlux;
+public double thermalInternalFlux;
+public double thermalInternalFluxPrevious;
+
+public double thermalMass; //Kj/K
+public double thermalMassModifier;
+public double thermalMassReciprocal;
+
+heat capacity: Joules/Kelvin
+
+
+
+
+
+
+
+
+Heat Simulation:
+- Completely revised part heating model, energy flux is considered, not merely temperature.
+- All game temperatures changed from ‘Kervin’ to proper Kelvin.
+- Radiative, conductive, and convective heating and cooling are simulated.
+- Parts can have individual radiative, conductive, and convective properties.
+- All parts now emit a blackbody radiation glow if they get hot enough.
+- Conduction between attached parts is more accurately modelled.
+- Parts can occlude other parts from being exposed to sunlight, celestial body albedo/radiation and supersonic flow.
+- Reentry/hypersonic flight heating is now simulated.
+- Added difficulty Setting to scale aerodynamic heating.
+- Atmospheric temperature, and thus density, takes latitude and sun position into account.
+- Celestial bodies accurately emit thermal radiation making nearby craft warmer.
+- Service modules, fairings and cargo bays can be used to protect parts inside from heat.
+- Heat shields provide (finite) ablation-based protection for parts behind them.

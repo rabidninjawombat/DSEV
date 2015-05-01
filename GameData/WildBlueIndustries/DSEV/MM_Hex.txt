@@ -9,3 +9,15 @@
     TechRequired = unreachable
     category = -1
 }
+
+@PART[WBI_DoubleHexTruss]:NEEDS[NearFutureConstruction]
+{
+    TechRequired = unreachable
+    category = -1
+}
+
+@PART[WBI_HexNode]:NEEDS[NearFutureConstruction]
+{
+    TechRequired = unreachable
+    category = -1
+}

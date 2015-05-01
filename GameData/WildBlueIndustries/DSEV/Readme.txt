@@ -18,11 +18,44 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
-0.3.17: Maddening Heat Part 2
+0.3.17: Active Radiators! (and Moar Tanks)
+IMPORTANT NOTES
+- This update will break your saves. Please retire any vessels in flight.
+- Please redo action groups for your VAB/SPH vehicle's radiator panels as these will have changed since last update.
+- The Centrifuge ring and countertorque ring use the latest InfernalRobotics mod; please set up your action groups accordingly.
+- Heat management is a work in progress. The radiators DO work and keep your craft cool! :) But more tuning is needed. Right now
+the Fusion Reactor and Supernova engine heat production is dialed back until I find the right balance.
+
+Thank you Red Iron Crown and NathanKell for your valuable information on the new heat mechanics! :)
+
+Gameplay
 - Recompiled for KSP 1.0
-- Redesigned the heat management system; no more exploding radiators!*
+- Added new part category for DSEV.
+
+Fuel Tanks
+- Removed the old fusion pellet tanks.
+- Added the FLM-900 Multipurpose Storage Tank. It's a half-sized version of the FLM-1800 designed to fit the half-hex truss.
+- Added the FLM-14400, FLM-7200, and FLM-3600 Multipurpose Storage Tanks. These massive orange tanks are able to hold different resources, and you can toggle their diameters from 3.75m to 2.5m.
+- The resource storage templates are now based upon 1L units, in-line with the revisions to Community Resource Pack. Now you can hold more stuff!
+- Added the Coolant storage template.
+
+ISRU
+- Added liquid hydrogen creation to the stock ISRU.
+- Added FusionPellets creation to the stock ISRU.
+
+Power & Heat management
+- The Fusion Reactor now uses the stock resource generator.
+- The radiators now provide active and passive heat radiation. You can also vent coolant (open-cycle cooling mode) to shed heat more rapidly. 
+- Radiators now start to glow red based upon temperature more accurately.
+NOTE: More heat management is on the way.
+
+Bug Fixes & Enhancements
+- Fixed an issue where the fusion reactor and Supernova engine would not remember that they were activated.
 - Fixed an issue with the ArcJet RCS thrusters not shutting off via action groups.
-* Unless you do something like enter the atmosphere...
+- Fixed an issue with the ArcJet RCS thrusters still showing stock thrust effects.
+- ArcJet and Supernova now use liquid hydrogen by default (previously it was liquid fuel, with a liquid hydrogen switch if Near Future Propulsion was installed). Rename MM_LiquidFuel.txt to MM_LiquidFuel.cfg if you want them to use LiquidFuel instead.
+- Removed SpinHub plugin in favor of latest Infernal Robotics 0.20c.
+
 
 0.3.16: Maddening Heat Part 1
 - Temporarily disabled heat management while I'm redesigning the heat management system. It will be back for 1.0

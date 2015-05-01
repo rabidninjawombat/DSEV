@@ -47,13 +47,13 @@ namespace WildBlueIndustries
         [KSPAction("RCS On")]
         public void ActionRCSOn(KSPActionParam param)
         {
-            rcsEnabled = true;
+            Enable();
         }
 
         [KSPAction("RCS Off")]
         public void ActionRCSOff(KSPActionParam param)
         {
-            rcsEnabled = false;
+            Disable();
 
             DeactivateFX();
         }
@@ -164,7 +164,7 @@ namespace WildBlueIndustries
                     isRCSOn = true;
                     particleEmitter.emit = true;
                     particleEmitter.enabled = true;
-                    Debug.Log("RCS is on");
+                    thrusterFX.Power = 0f;
                 }
             }
         }

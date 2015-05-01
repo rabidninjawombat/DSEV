@@ -20,156 +20,121 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 namespace WildBlueIndustries
 {
-    public class ModuleFusionReactor : WBIHeater
+    public class ModuleFusionReactor : ModuleResourceConverter
     {
         [KSPField(isPersistant = true)]
         public float ecNeededToStart;
 
         [KSPField(isPersistant = true)]
-        public string reactorFuel;
+        public bool reactorIsOn;
 
-        [KSPField(isPersistant = true)]
-        public float fuelConsumption;
-
-        [KSPField(isPersistant = true)]
-        public float ecProduced;
-
-        [KSPField(isPersistant = true)]
-        public float fuelRequest;
-
-        [KSPField(guiActive = true)]
-        public string status;
+        [KSPField(guiActive = true, guiName = "Temperature")]
+        public string reactorStatus;
 
         protected Light[] lights;
 
         public override string GetInfo()
         {
-            return string.Format("Requires {0:F2}ec to start.\nProduces {1:F2} SystemHeat per second.\nConsumes {2:F4} FusionPellets per second.", ecNeededToStart, heatGenerated, fuelConsumption);
+            return base.GetInfo() + string.Format("\nRequires {0:F2}ec to start.", ecNeededToStart);
         }
 
-        public override void ToggleHeaterAction(KSPActionParam param)
+        [KSPAction("Start Reactor")]
+        public void StartReactorAction(KSPActionParam param)
         {
-            base.ToggleHeaterAction(param);
-            ScreenMessages.PostScreenMessage("Reactor online.", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+            if (reactorIsOn == false)
+                ToggleReactor();
         }
 
-        public override void ToggleHeater()
+        [KSPAction("Stop Reactor")]
+        public void StopReactorAction(KSPActionParam param)
+        {
+            if (reactorIsOn)
+                ToggleReactor();
+        }
+
+        [KSPAction("Toggle Reactor")]
+        public void ToggleReactorAction(KSPActionParam param)
+        {
+            ToggleReactor();
+        }
+
+        [KSPEvent(guiName = "Toggle Reactor", guiActive = true)]
+        public void ToggleReactor()
         {
             double ecObtained = 0f;
 
-            if (heaterIsOn == false)
+            if (reactorIsOn == false)
             {
                 ecObtained = this.part.RequestResource("ElectricCharge", ecNeededToStart);
                 if (ecObtained < ecNeededToStart)
                 {
+                    this.part.RequestResource("ElectricCharge", -ecObtained);
                     ScreenMessages.PostScreenMessage("Fully charge the reactor before starting.", 5.0f, ScreenMessageStyle.UPPER_CENTER);
                     return;
                 }
 
-                //We're good to go, try to start.
+                //We're good to go.
+                reactorIsOn = true;
                 this.Activate();
-
-                if (heaterIsOn)
-                {
-                    Events["ToggleHeater"].guiName = "Reactor Off";
-                }
+                ScreenMessages.PostScreenMessage("Reactor online.", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                Events["ToggleReactor"].guiName = "Reactor Off";
             }
 
             //Shut off the reactor
             else
             {
                 this.Shutdown();
-                Events["ToggleHeater"].guiName = "Reactor On";
+                reactorIsOn = false;
+                ScreenMessages.PostScreenMessage("Reactor offline.", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                Events["ToggleReactor"].guiName = "Reactor On";
             }
         }
 
         public override void OnUpdate()
         {
             base.OnUpdate();
-
-            if (isOverheated)
-                status = "Overheated";
-            else if (heaterIsOn == false)
-                status = "Off";
-            else
-                status = "Output: " + ecProduced + "EC/sec";
-        }
-
-        public override void OnFixedUpdate()
-        {
-            PartResource ecReserve = this.part.Resources["ElectricCharge"];
-
-            if (HighLogic.LoadedSceneIsEditor)
-                return;
-
-            base.OnFixedUpdate();
-            float fuelPerTimeTick = fuelConsumption * TimeWarp.fixedDeltaTime;
-
-            if (heaterIsOn)
-            {
-                //If the EC reserve is full then run the reactor in idle mode to consume fewer resources.
-                if (ecReserve.amount == ecReserve.maxAmount)
-                    fuelPerTimeTick = fuelPerTimeTick / 10.0f;
-
-                //Consume reactor fuel. There seems to be a minimum amount to request.
-                fuelRequest += fuelPerTimeTick;
-                if (fuelRequest >= 0.01f)
-                {
-                    float fuelObtained = this.part.RequestResource(reactorFuel, fuelRequest);
-
-                    if (fuelObtained < fuelRequest)
-                    {
-                        ScreenMessages.PostScreenMessage("Shutting down, reactor is out of " + reactorFuel, 5.0f, ScreenMessageStyle.UPPER_CENTER);
-                        this.Shutdown();
-                        fuelRequest = 0f;
-                        return;
-                    }
-
-                    //Reset the fuel to request
-                    fuelRequest = 0f;
-                }
-
-                //We are still running, generate electricity
-                this.part.RequestResource("ElectricCharge", -ecProduced * TimeWarp.fixedDeltaTime);
-            }
+            reactorStatus = String.Format("{0:#.##}K", this.part.temperature);
         }
 
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
 
-            Events["ToggleHeater"].guiName = "Reactor On";
-            Actions["ToggleHeaterAction"].guiName = "Toggle Reactor";
+            Events["StartResourceConverter"].guiActive = false;
+            Events["StartResourceConverter"].guiActiveEditor = false;
+            Events["StopResourceConverter"].guiActive = false;
+            Events["StopResourceConverter"].guiActiveEditor = false;
+            Actions["StopResourceConverterAction"].active = false;
+            Actions["StartResourceConverterAction"].active = false;
+
+            if (reactorIsOn)
+            {
+                this.Activate();
+                Events["ToggleReactor"].guiName = "Reactor Off";
+            }
+            else
+            {
+                Events["ToggleReactor"].guiName = "Reactor On";
+            }
         }
 
-        public override void OverheatWarning()
+        public void Activate()
         {
-            isOverheated = true;
-            heaterIsOn = false;
-
-            ScreenMessages.PostScreenMessage("Reactor shutting down due to overheating!", 5.0f, ScreenMessageStyle.UPPER_CENTER);
-
-            Events["ToggleHeater"].guiName = "Reactor On";
-
-            if (onOverheatDelegate != null)
-                onOverheatDelegate();
-        }
-
-        public override void Activate()
-        {
-            base.Activate();
             List<string> fusionEmitters = new List<string>();
 
             fusionEmitters.Add("Fusion");
 
-            showOnlyEmittersInList(fusionEmitters);
+            Utils.showOnlyEmittersInList(this.part, fusionEmitters);
+
+            StartResourceConverter();
         }
 
-        public override void Shutdown()
+        public void Shutdown()
         {
-            base.Shutdown();
+            Utils.showOnlyEmittersInList(this.part, null);
 
-            hideAllEmitters();
+            StopResourceConverter();
         }
+
     }
 }

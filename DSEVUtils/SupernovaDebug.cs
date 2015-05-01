@@ -20,7 +20,6 @@ namespace WildBlueIndustries
         protected override void DrawWindowContents(int windowId)
         {
             GUILayout.BeginVertical();
-            supernovaController.manageHeat = GUILayout.Toggle(supernovaController.manageHeat, "Heat management enabled");
 
             supernovaController.requiresECToStart = GUILayout.Toggle(supernovaController.requiresECToStart, "EC required to start");
 

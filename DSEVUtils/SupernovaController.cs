@@ -24,7 +24,7 @@ namespace WildBlueIndustries
         Overheated
     }
 
-    public class SupernovaController : WBIHeater
+    public class SupernovaController : ExtendedPartModule
     {
         const float kMinimumECToCharge = 1.0f;
         const string kStartEngine = "Start Engine";
@@ -36,6 +36,7 @@ namespace WildBlueIndustries
         const string kOutOfEC = "Stopping the reactor, can't get enough electricity to charge.";
         const string kChargingCapacitor = "Charging capacitor before engine start...";
         const string kOverheated = "Overheated";
+        const string kEngineStarted = "Engine started.";
 
         protected MultiModeEngine multiModeEngine;
         protected ModuleEnginesFXWBI primaryEngine;
@@ -45,13 +46,16 @@ namespace WildBlueIndustries
         public string reactorStatus;
 
         [KSPField(isPersistant = true)]
-        public EReactorStates reactorState = EReactorStates.None;
+        public EReactorStates reactorState;
 
         [KSPField(isPersistant = true)]
         public double currentElectricCharge = 0f;
 
         [KSPField(isPersistant = true)]
         public float fuelRequest;
+
+        [KSPField(isPersistant = true)]
+        public bool reactorIsOn;
 
         [KSPField(guiActive = true, guiName = "Engine Temperature")]
         string engineTemperature;
@@ -76,14 +80,18 @@ namespace WildBlueIndustries
         }
 
         [KSPAction(kStartEngine)]
-        public void StartReactor(KSPActionParam param)
+        public void StartReactorAction(KSPActionParam param)
         {
-            StopReactor(param);
-            ToggleHeater();
+            StopReactorAction(param);
+            ToggleReactor();
+            if (reactorState == EReactorStates.Charging)
+                ScreenMessages.PostScreenMessage(kChargingCapacitor, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+            else if (reactorState == EReactorStates.Idling)
+                ScreenMessages.PostScreenMessage(kEngineStarted, 5.0f, ScreenMessageStyle.UPPER_CENTER);
         }
 
         [KSPAction(kShutdownEngine)]
-        public void StopReactor(KSPActionParam param)
+        public void StopReactorAction(KSPActionParam param)
         {
             primaryEngine.Events["Shutdown"].Invoke();
             primaryEngine.currentThrottle = 0;
@@ -93,7 +101,7 @@ namespace WildBlueIndustries
             secondaryEngine.currentThrottle = 0;
             secondaryEngine.requestedThrottle = 0;
 
-            Events["ToggleHeater"].guiName = kStartEngine;
+            Events["ToggleReactor"].guiName = kStartEngine;
 
             if (reactorState != EReactorStates.Charging)
                 currentElectricCharge = 0f;
@@ -102,13 +110,71 @@ namespace WildBlueIndustries
                 reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
             else
                 reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart - currentElectricCharge);
-            heaterIsOn = false;
+            reactorIsOn = false;
+        }
+
+        [KSPEvent(guiActive = true, guiName = "Start Engine", active = true, externalToEVAOnly = false, unfocusedRange = 3.0f, guiActiveUnfocused = true)]
+        public void ToggleReactor()
+        {
+            //If we got this far then it means we have the potential to start.
+            //First check to see if we have enough electric charge.
+            if (reactorState == EReactorStates.Off)
+            {
+                //If we need ec to start, then set our state to charging
+                if ((currentElectricCharge < ecNeededToStart) && requiresECToStart)
+                {
+                    reactorState = EReactorStates.Charging;
+                    reactorIsOn = false;
+                    Events["ToggleReactor"].guiName = kStopCharging;
+                    ScreenMessages.PostScreenMessage(kChargingCapacitor, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                }
+
+                //Capacitor is fully charged, activate the engine and star idling the reactor
+                else
+                {
+                    reactorState = EReactorStates.Idling;
+                    reactorIsOn = true;
+                    Events["ToggleReactor"].guiName = kShutdownEngine;
+
+                    //Start your engine
+                    if (multiModeEngine.runningPrimary)
+                        primaryEngine.Activate();
+                    else
+                        secondaryEngine.Activate();
+                }
+
+                //Ok, we're done
+                return;
+            }
+
+            else if (reactorState == EReactorStates.Charging || reactorState == EReactorStates.Idling)
+            {
+                reactorState = EReactorStates.Off;
+                reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart - currentElectricCharge);
+                reactorIsOn = false;
+            }
+
+            else if (reactorState == EReactorStates.Running)
+            {
+                StopReactorAction(null);
+            }
+
+            //Just set the GUI
+            if (reactorIsOn)
+            {
+                Events["ToggleReactor"].guiName = kShutdownEngine;
+            }
+
+            else
+            {
+                Events["ToggleReactor"].guiName = kStartEngine;
+            }
         }
 
         public void DebugReset()
         {
-            StopReactor(null);
-            isOverheated = false;
+            StopReactorAction(null);
+            reactorIsOn = false;
             currentElectricCharge = 0f;
             reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
         }
@@ -172,11 +238,25 @@ namespace WildBlueIndustries
                 engine.onActiveDelegate = OnEngineActive;
                 engine.Events["Activate"].guiActive = false;
                 engine.Events["Shutdown"].guiActive = false;
+                engine.Events["Activate"].guiActiveEditor = false;
+                engine.Events["Shutdown"].guiActiveEditor = false;
             }
 
-            Events["ToggleHeater"].guiName = kStartEngine;
-            Actions["ToggleHeaterAction"].guiName = kToggleEngine;
             Events["ShowDebug"].guiActive = showDebugButton;
+
+            if (reactorIsOn)
+            {
+                this.Activate();
+                reactorState = EReactorStates.Idling;
+                reactorStatus = reactorState.ToString();
+                Events["ToggleReactor"].guiName = kShutdownEngine;
+
+                //Start your engine
+                if (multiModeEngine.runningPrimary)
+                    primaryEngine.Activate();
+                else
+                    secondaryEngine.Activate();
+            }
 
             if (reactorState == EReactorStates.None)
             {
@@ -186,106 +266,9 @@ namespace WildBlueIndustries
             }
         }
 
-        public override void ToggleHeater()
+        public void Activate()
         {
-            base.ToggleHeater();
-
-            //If we got this far then it means we have the potential to start.
-            //First check to see if we have enough electric charge.
-            if (reactorState == EReactorStates.Off)
-            {
-                //If we need ec to start, then set our state to charging
-                if ((currentElectricCharge < ecNeededToStart) && requiresECToStart)
-                {
-                    reactorState = EReactorStates.Charging;
-                    heaterIsOn = false;
-                    Events["ToggleHeater"].guiName = kStopCharging;
-                }
-
-                //Capacitor is fully charged, activate the engine and star idling the reactor
-                else
-                {
-                    reactorState = EReactorStates.Idling;
-                    heaterIsOn = true;
-                    Events["ToggleHeater"].guiName = kShutdownEngine;
-
-                    //Start your engine
-                    if (multiModeEngine.runningPrimary)
-                        primaryEngine.Activate();
-                    else
-                        secondaryEngine.Activate();
-                }
-
-                //Ok, we're done
-                return;
-            }
-
-            else if (reactorState == EReactorStates.Charging || reactorState == EReactorStates.Idling)
-            {
-                reactorState = EReactorStates.Off;
-                reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart - currentElectricCharge);
-                heaterIsOn = false;
-            }
-
-            else if (reactorState == EReactorStates.Running)
-            {
-                StopReactor(null);
-            }
-
-            //Just set the GUI
-            if (heaterIsOn)
-            {
-                Events["ToggleHeater"].guiName = kShutdownEngine;
-            }
-
-            else
-            {
-                Events["ToggleHeater"].guiName = kStartEngine;
-            }
-        }
-
-        public override void ModTotalHeatToShed()
-        {
-            base.ModTotalHeatToShed();
-
-            if (reactorState != EReactorStates.Idling && reactorState != EReactorStates.Running)
-            {
-                totalHeatToShed = 0f;
-                return;
-            }
-
-            if (reactorState == EReactorStates.Idling)
-            {
-                totalHeatToShed *= 0.1f;
-            }
-
-            else if (primaryEngine.isOperational)
-            {
-                totalHeatToShed = primaryEngineHeat * primaryEngine.currentThrottle;
-            }
-
-            else if (secondaryEngine.isOperational)
-            {
-                totalHeatToShed = secondaryEngineHeat * secondaryEngine.currentThrottle;
-            }
-
-            else
-            {
-                reactorState = EReactorStates.Idling;
-                reactorStatus = reactorState.ToString();
-                totalHeatToShed *= 0.1f;
-            }
-        }
-
-        public override void Activate()
-        {
-            if (manageHeat == false)
-            {
-                base.Activate();
-                return;
-            }
-
-            if (heaterIsOn == false && (primaryEngine.staged || secondaryEngine.staged))
+            if (reactorIsOn == false && (primaryEngine.staged || secondaryEngine.staged))
             {
                 primaryEngine.Events["Shutdown"].Invoke();
                 primaryEngine.currentThrottle = 0;
@@ -296,7 +279,7 @@ namespace WildBlueIndustries
                 secondaryEngine.requestedThrottle = 0;
 
                 if (reactorState != EReactorStates.Charging)
-                    Events["ToggleHeater"].guiName = kStartEngine;
+                    Events["ToggleReactor"].guiName = kStartEngine;
             }
         }
 
@@ -304,61 +287,81 @@ namespace WildBlueIndustries
         {
             base.OnUpdate();
 
-            if (manageHeat == false)
-                return;
-
-            engineTemperature = String.Format("{0:#.##}C", this.part.temperature);
-        }
-
-        public override void HeaterHasCooled()
-        {
-            base.HeaterHasCooled();
-            reactorState = EReactorStates.Off;
-            reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
-        }
-
-        public override void OverheatWarning()
-        {
-            isOverheated = true;
-            heaterIsOn = false;
-            ScreenMessages.PostScreenMessage(kOverheatWarning, 5.0f, ScreenMessageStyle.UPPER_CENTER);
-
-            primaryEngine.Events["Shutdown"].Invoke();
-            primaryEngine.currentThrottle = 0;
-            primaryEngine.requestedThrottle = 0;
-
-            secondaryEngine.Events["Shutdown"].Invoke();
-            secondaryEngine.currentThrottle = 0;
-            secondaryEngine.requestedThrottle = 0;
-
-            Events["ToggleHeater"].guiName = kStartEngine;
-
-            reactorState = EReactorStates.Overheated;
-            reactorStatus = kOverheated;
-            currentElectricCharge = 0f;
+            engineTemperature = String.Format("{0:#.##}K", this.part.temperature);
         }
 
         public override void OnFixedUpdate()
         {
             base.OnFixedUpdate();
+
+            //The logic below doesn't apply unless we're flying
+            if (!HighLogic.LoadedSceneIsFlight)
+                return;
+
+            if (reactorState == EReactorStates.None || reactorState == EReactorStates.Off)
+                return;
+
+            //If we are charging up, request electric charge and then exit.
+            if (ReactorNeedsCharge())
+                return;
+
+            //Set status
+            if (primaryEngine.currentThrottle > 0f || secondaryEngine.currentThrottle > 0f)
+                reactorState = EReactorStates.Running;
+            else
+                reactorState = EReactorStates.Idling;
+            reactorStatus = reactorState.ToString();
+
+            //Consume a small amount of fusion pellets to represent the fusion reactor's operation in NTR mode.
+            ConsumeFuel();
+        }
+
+
+        #endregion
+
+        #region Helpers
+        public bool ReactorNeedsCharge()
+        {
+            if (reactorState == EReactorStates.Charging)
+            {
+                currentElectricCharge += this.part.RequestResource("ElectricCharge", ecChargePerSec * TimeWarp.fixedDeltaTime);
+
+                //If we can't get the minimum EC required to charge the reactor, then shut off the reactor.
+                //This way, the ship won't be starved for power.
+                if (currentElectricCharge < kMinimumECToCharge)
+                {
+                    ScreenMessages.PostScreenMessage(kOutOfEC, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                    StopReactorAction(null);
+                    return true;
+                }
+
+                if (currentElectricCharge < ecNeededToStart)
+                {
+                    reactorStatus = EReactorStates.Charging.ToString() + String.Format(" {0:F2}%", (currentElectricCharge / ecNeededToStart) * 100);
+                    return true;
+                }
+
+                //If we have enough charge then we can start the engine.
+                reactorIsOn = true;
+                currentElectricCharge = 0f;
+                Events["ToggleReactor"].guiName = kShutdownEngine;
+                if (multiModeEngine.runningPrimary)
+                    primaryEngine.Activate();
+                else
+                    secondaryEngine.Activate();
+            }
+
+            return false;
+        }
+
+        public void ConsumeFuel()
+        {
             float fuelPerTimeTick = fuelConsumption * TimeWarp.fixedDeltaTime;
 
             //Adjust fuel consuption for idling
             if (primaryEngine.thrustPercentage == 0f && secondaryEngine.thrustPercentage == 0f)
                 fuelPerTimeTick = fuelPerTimeTick / 10.0f;
 
-            //The logic below doesn't apply unless we're flying
-            if (!HighLogic.LoadedSceneIsFlight)
-                return;
-
-            if (manageHeat)
-            {
-                //If reactor is not running then exit
-                if (reactorState != EReactorStates.Running)
-                    return;
-            }
-
-            //Consume a small amount of fusion pellets to represent the fusion reactor's operation in NTR mode.
             if (multiModeEngine.runningPrimary == true)
             {
                 //Make sure we reach the minimum threshold
@@ -377,8 +380,8 @@ namespace WildBlueIndustries
                         primaryEngine.currentThrottle = 0;
                         primaryEngine.requestedThrottle = 0;
                         primaryEngine.flameout = true;
-                        heaterIsOn = false;
-                        Events["ToggleHeater"].guiName = kStartEngine;
+                        reactorIsOn = false;
+                        Events["ToggleReactor"].guiName = kStartEngine;
                         reactorState = EReactorStates.Off;
                         reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
                     }
@@ -389,85 +392,9 @@ namespace WildBlueIndustries
             }
         }
 
-        public override float GenerateHeat()
-        {
-            base.GenerateHeat();
-            bool isFlameout = false;
-
-            //The logic below doesn't apply unless we're flying
-            if (!HighLogic.LoadedSceneIsFlight)
-                return 0f;
-
-            //If reactor is off then exit
-            if (reactorState == EReactorStates.Off || reactorState == EReactorStates.Overheated)
-                return 0f;
-
-            //If we've flamed out then idle the reactor
-            else if (reactorState == EReactorStates.Running)
-            {
-                if (primaryEngine.CalculateThrust() <= 0f && primaryEngine.currentThrottle > 0f)
-                    isFlameout = true;
-                if (secondaryEngine.CalculateThrust() <= 0f && secondaryEngine.currentThrottle > 0f)
-                    isFlameout = true;
-
-                if (isFlameout)
-                {
-                    secondaryEngine.currentThrottle = 0;
-                    secondaryEngine.requestedThrottle = 0;
-                    primaryEngine.currentThrottle = 0;
-                    primaryEngine.requestedThrottle = 0;
-                    reactorState = EReactorStates.Idling;
-                    return 0f;
-                }
-            }
-
-            //If we are charging up, request electric charge and then exit.
-            if (reactorState == EReactorStates.Charging)
-            {
-                currentElectricCharge += this.part.RequestResource("ElectricCharge", ecChargePerSec * TimeWarp.fixedDeltaTime);
-
-                //If we can't get the minimum EC required to charge the reactor, then shut off the reactor.
-                //This way, the ship won't be starved for power.
-                if (currentElectricCharge < kMinimumECToCharge)
-                {
-                    ScreenMessages.PostScreenMessage(kOutOfEC, 5.0f, ScreenMessageStyle.UPPER_CENTER);
-                    StopReactor(null);
-                    return 0f;
-                }
-
-                if (currentElectricCharge < ecNeededToStart)
-                {
-                    reactorStatus = EReactorStates.Charging.ToString() + String.Format(" {0:F2}%", (currentElectricCharge / ecNeededToStart) * 100);
-                    return 0f;
-                }
-
-                //If we have enough charge then we can start the engine.
-                heaterIsOn = true;
-                currentElectricCharge = 0f;
-                if (Events.Contains("ToggleHeater"))
-                    Events["ToggleHeater"].guiName = kShutdownEngine;
-                if (multiModeEngine.runningPrimary)
-                    primaryEngine.Activate();
-                else
-                    secondaryEngine.Activate();
-            }
-
-            //Set status
-            if (primaryEngine.currentThrottle > 0f || secondaryEngine.currentThrottle > 0f)
-                reactorState = EReactorStates.Running;
-            else if (isOverheated == false)
-                reactorState = EReactorStates.Idling;
-            reactorStatus = reactorState.ToString();
-
-            return totalHeatToShed;
-        }
-
-        #endregion
-
-        #region Helpers
         public void OnEngineActive(string engineID, bool isStaged)
         {
-            if (heaterIsOn == false && isStaged)
+            if (reactorIsOn == false && isStaged)
             {
                 primaryEngine.Events["Shutdown"].Invoke();
                 primaryEngine.currentThrottle = 0;
@@ -481,8 +408,8 @@ namespace WildBlueIndustries
                 if (reactorState != EReactorStates.Charging)
                 {
                     ScreenMessages.PostScreenMessage(kChargingCapacitor, 5.0f, ScreenMessageStyle.UPPER_CENTER);
-                    Events["ToggleHeater"].guiName = kStartEngine;
-                    ToggleHeater();
+                    Events["ToggleReactor"].guiName = kStartEngine;
+                    ToggleReactor();
                 }
             }
         }
