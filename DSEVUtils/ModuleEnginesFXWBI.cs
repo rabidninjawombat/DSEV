@@ -34,21 +34,17 @@ namespace WildBlueIndustries
                 onActiveDelegate(this.engineID, this.staged);
         }
 
-        public override void OnFixedUpdate()
+        public void ShowParticleEffects()
         {
-            base.OnFixedUpdate();
             KSPParticleEmitter[] emitters = part.GetComponentsInChildren<KSPParticleEmitter>();
 
             if (emitters == null)
                 return;
 
-            if (_lastCurrentThrottle == currentThrottle)
-                return;
-
             foreach (KSPParticleEmitter emitter in emitters)
             {
                 //If the emitter is on the list then show it
-                if (emitter.name == this.engineID)
+                if (emitter.name == this.runningEffectName)
                 {
                     if (currentThrottle > 0 && isOperational)
                     {
@@ -69,6 +65,17 @@ namespace WildBlueIndustries
                     emitter.enabled = false;
                 }
             }
+        }
+
+        public override void OnFixedUpdate()
+        {
+            base.OnFixedUpdate();
+
+            if (_lastCurrentThrottle == currentThrottle)
+                return;
+            _lastCurrentThrottle = currentThrottle;
+
+            ShowParticleEffects();
         }
     }
 }

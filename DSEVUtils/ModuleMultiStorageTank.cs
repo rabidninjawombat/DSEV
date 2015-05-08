@@ -112,12 +112,20 @@ namespace WildBlueIndustries
         [KSPEvent(guiActiveEditor = true, guiActive = false, guiName = "Toggle Diameter", active = true)]
         public void ToggleDiameter()
         {
-            showLargeDiameter = !showLargeDiameter;
-
-            setVisibleObjects();
-
             if (HighLogic.LoadedSceneIsEditor)
             {
+                //If there are parts attached then don't allow the switch.
+                foreach (Part childPart in this.part.children)
+                    if (childPart.attachMode == AttachModes.SRF_ATTACH)
+                    {
+                        ScreenMessages.PostScreenMessage("Cannot change tank diameter until attached parts are removed.", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                        return;
+                    }
+
+                showLargeDiameter = !showLargeDiameter;
+
+                setVisibleObjects();
+
                 //Get the resource switcher
                 WBIResourceSwitcher resourceSwitcher = this.part.FindModuleImplementing<WBIResourceSwitcher>();
                 if (resourceSwitcher == null)
@@ -199,6 +207,20 @@ namespace WildBlueIndustries
             base.OnLoad(node);
 
             setObject(-1);
+        }
+
+        public override void OnSave(ConfigNode node)
+        {
+            base.OnSave(node);
+            string value;
+
+            value = node.GetValue("showLargeDiameter");
+            if (string.IsNullOrEmpty(value))
+                node.AddValue("showLargeDiameter", showLargeDiameter);
+
+            value = node.GetValue("toggleDiameters");
+            if (string.IsNullOrEmpty(value))
+                node.AddValue("toggleDiameters", toggleDiameters);
         }
 
         public override void OnStart(StartState state)

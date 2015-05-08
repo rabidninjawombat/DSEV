@@ -18,6 +18,13 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.3.19: Hotfix
+- The Supernova now properly shows its engine flame.
+- The Ace ArcJet is now the little engine that can (it works now).
+- You can no longer toggle a tank diameter if you have parts attached to it.
+- The resource panel now updates properly when you switch resources.
+
+
 0.3.18: Maddening Heat Part 2
 
 Heat Management

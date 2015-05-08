@@ -346,9 +346,20 @@ namespace WildBlueIndustries
                 currentElectricCharge = 0f;
                 Events["ToggleReactor"].guiName = kShutdownEngine;
                 if (multiModeEngine.runningPrimary)
+                {
                     primaryEngine.Activate();
+                    primaryEngine.ShowParticleEffects();
+                }
                 else
+                {
                     secondaryEngine.Activate();
+                    secondaryEngine.ShowParticleEffects();
+                }
+                ModuleGimbal gimbal = this.part.FindModuleImplementing<ModuleGimbal>();
+                if (gimbal != null)
+                {
+                    gimbal.OnActive();
+                }
             }
 
             return false;
