@@ -1,6 +1,6 @@
 small radiator
 1.25m fusion reactor
 0.625m fusion reactor
-variable mass ballast on docking ports and variable mass ballast (suggestion by Publicsafetydan)
+variable mass ballast on docking ports and variable mass ballast (suggestion by Publicsafetydan) Mascons
 variable thrust power on RCS?
-12 radiators to keep Supernova cool
+Custom resources based on CRP?

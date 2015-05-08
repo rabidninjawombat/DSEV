@@ -11,3 +11,5 @@ C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\TDx.TDxInput.dll
 C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\TrackIRUnity.dll
 C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Mono.Cecil.dll
 C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Mono.Security.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Cooldown.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Cooldown.pdb

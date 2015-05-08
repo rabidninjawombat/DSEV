@@ -49,11 +49,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModuleArcJetEngine.cs" />
     <Compile Include="ModuleEnginesFXWBI.cs" />
     <Compile Include="ModuleFusionReactor.cs" />
     <Compile Include="ModuleHexNode.cs" />
     <Compile Include="ModuleHexPort.cs" />
     <Compile Include="ModuleHexTruss.cs" />
+    <Compile Include="ModuleMasscon.cs" />
     <Compile Include="ModuleMultiStorageTank.cs" />
     <Compile Include="ModuleRCSArcJet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,6 +63,10 @@
     <Compile Include="SupernovaDebug.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Cooldown\Cooldown.csproj">
+      <Project>{29BA1A12-365A-4E8E-9786-57772F0681DB}</Project>
+      <Name>Cooldown</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\WildBlueTools\WildBlueTools.csproj">
       <Project>{CC0BDF1A-9641-4628-9F0F-3500DDC99534}</Project>
       <Name>WildBlueTools</Name>

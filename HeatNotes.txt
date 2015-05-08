@@ -61,12 +61,13 @@ thermalInternalFlux;
 thermalInternalFluxPrevious;
 
 Thermal mass of the part:
-thermalMass: (dryMass * standardSpecificHeatCapacity *thermalMassModifier) + (resourceMass * resourceSpecificHeatCapacity) //Thanks Red Iron Crown!
+thermalMass: (dryMass * standardSpecificHeatCapacity *thermalMassModifier) + (resourceMass * hsp) //Resource thermal mass calculated for each resource. Possibly already done with resourceThermalMass. Thanks Red Iron Crown!
 
 For my radiator with thermalMassModifier = 4.475 and dryMass = 0.5### and no resources:
 thermalMass = 0.5 tonnes * 800 * 4.475 = 1,790 KJ/K (confirmed in game)
 I based my thermalMassModifier on lithium's specific heat capacity of 3.58 KJ/Kg-K (3850 KJ/tonne-K)
 ### I suppose I could also have 0.5tonnes of lithium as a coolant resource, brilliantly named Coolant.
+NOTE: If I have a Coolant resource, then I now have a way to sacrifice Coolant for a quick heat dump.
 
 So, thermal energy = thermalMass (KJ/K) * temperature (K)
 If my radiator is at 1000 K, then my thermal energy = 1790 * 1000 = 1,790,000 KJ
@@ -90,10 +91,32 @@ public double thermalMassReciprocal;
 heat capacity: Joules/Kelvin
 
 
+ public void AddThermalFlux(double kilowatts);
 
 
+Copied from other things I said recently:
+heatProduction is now scaled by the part's thermal mass (as well as the internal generation factor). So assuming the latter is 1 (it's not, it's something like 0.03) then heatProduction=1 literally means "this engine produces enough heat per second to raise its temperature 1 K per second".
+Yet increasing 0.02t of mass 1K means waaaaay less energy than increasing 6t of Mainsail. And that heat (the energy, not the temperature) conducts outward.
 
+emissiveConstant is the emissivity factor in the black-body radiation equation (flux in W = Stefan-Boltzmann constant * emissivity * area * temperatureK^4). It most certainly cannot be >1 (1 is a perfect black body).
+.95 is the "poor man's heat shield"--non-ablatively shielded parts, like spaceplane wings, have that, that means they radiate away heat very fast, comparatively. Default is 0.4, which is gray. Note that solar absorption appears to equal emissivity (this is why solar panels take in lots of heat from the topside as well as radiating from the underside).
 
+heatConductivity is per unit area of connection (connection area = the minimum of the facing area of the two parts).
+
+There's also a heatConvectiveConstant (in Part) although I don't think anything uses it yet. It defaults to 1.0. You can raise it to increase that part's convection rate, or lower it to lower it. 
+
+Good stuff! Here's a bit more.
+
+Copied from other things I said recently:
+heatProduction is now scaled by the part's thermal mass (as well as the internal generation factor). So assuming the latter is 1 (it's not, it's something like 0.03) then heatProduction=1 literally means "this engine produces enough heat per second to raise its temperature 1 K per second".
+Yet increasing 0.02t of mass 1K means waaaaay less energy than increasing 6t of Mainsail. And that heat (the energy, not the temperature) conducts outward.
+
+emissiveConstant is the emissivity factor in the black-body radiation equation (flux in W = Stefan-Boltzmann constant * emissivity * area * temperatureK^4). It most certainly cannot be >1 (1 is a perfect black body).
+.95 is the "poor man's heat shield"--non-ablatively shielded parts, like spaceplane wings, have that, that means they radiate away heat very fast, comparatively. Default is 0.4, which is gray. Note that solar absorption appears to equal emissivity (this is why solar panels take in lots of heat from the topside as well as radiating from the underside).
+
+heatConductivity is per unit area of connection (connection area = the minimum of the facing area of the two parts).
+
+There's also a heatConvectiveConstant (in Part) although I don't think anything uses it yet. It defaults to 1.0. You can raise it to increase that part's convection rate, or lower it to lower it
 
 
 Heat Simulation:
@@ -110,3 +133,79 @@ Heat Simulation:
 - Celestial bodies accurately emit thermal radiation making nearby craft warmer.
 - Service modules, fairings and cargo bays can be used to protect parts inside from heat.
 - Heat shields provide (finite) ablation-based protection for parts behind them.
+
+
+1) Squad maxTemp values:
+
+- Heatshields have 3400
+- Pods designed for reentry have 2400. Other pods and cockpits, even the MK3 shuttle cockpit, have 2000 maxTemp.
+- Fairings 2400
+- Service bays 2600
+- Sensitive equipment 1200
+   · wheels
+   · science
+   · radial batteries
+   · probecores (exception: inline probes 2000, sphere 1800)
+   · unshielded solar panels
+
+- Subsonic plane gears 1000
+- Intakes: subsonic 1900, supersonic 2000, hypersonic 2100
+- All the engines have 2000 maxTemp (exception: nuclear engine 2500, massive SRBs 2200)
+- Everything else 2000 maxTemp (personally I'd tweak down many of those).
+
+
+1.1) heatProduction of Squad engines does not exceed 300 (Skipper). Mighty Mainsail has 180 heatProuction. If the heatProduction exceeds these values clustered engines start to burn each other. Note: KR-1x2 "Twin-Boar" has 350 heatProuction, but it has 2 engines clustered and embedded into a fuel tank.
+SRBs have a heatProduction of 510, thus they're not designed to burn for as long at max thrust.
+
+Physics behind it:
+heatProduction is now scaled by the part's thermal mass (as well as the internal generation factor). So assuming the latter is 1 (it's not, it's something like 0.03) then heatProduction=1 literally means "this engine produces enough heat per second to raise its temperature 1 K per second".
+Yet increasing 0.02t of mass 1K means waaaaay less energy than increasing 6t of Mainsail. And that heat (the energy, not the temperature) conducts outward. (c) NathanKell
+
+2) A new line emissiveConstant was introduced for heat dissipation and varies between 0.1 and 0.95.
+It was given to:
+- engines 	0.8
+- SRBs 	0.5
+- landing legs 	0.8
+- solar panels 	0.95
+- landing gears 	0.95
+- light aero parts
+	0.4
+- "shielded" aero parts 	0.95
+- subsonic intake 	0.55
+- supersonic intake 	0.7
+- hypersonic intake 	0.95
+
+Physics behind it:
+emissiveConstant is the emissivity factor in the black-body radiation equation
+
+flux in W = Stefan-Boltzmann constant * emissivity * area * temperatureK^4.
+
+It most certainly cannot be >1 (1 is a perfect black body).
+
+0.95 is the "poor man's heat shield"--non-ablatively shielded parts, like spaceplane wings, have that, that means they radiate away heat very fast, comparatively. Default is 0.4, which is gray. Note that solar absorption appears to equal emissivity (this is why solar panels take in lots of heat from the topside as well as radiating from the underside). (c) NathanKell
+
+3) Another new parameter thermalMassModifier which defines the speed of heat accumulation in the part. Specific heat capacity. The number in this modifier multiplies the existing capacity of the part.
+
+thermalMass = dryMass * standardSpecificHeatCapacity * thermalMassModifier + resourceMass * hsp
+
+The thermal mass can be shown in part tooltips after checking it in debug toolbar->physics->thermal
+
+It was given to light parts which should withstand heat better:
+- solar panels 	2.0
+- light aero parts 	3.0
+- "shielded" aero parts 	4.0
+- intakes 	4.0
+- landing legs 	3.0
+- landing gears 	4.0
+- service bay 	5.0
+
+It was removed from heatshields in favor of Ablator:
+- heatshields                   	0.001
+
+
+4) The last new parameter is heatConductivity which defines how fast the part conducts its temperature between adjacent parts. From 0 to 1 the speed increases. The less the number, the better a part protects adjacent parts from its own heat. Your PC's heatsink probably has around 0.7
+heatConductivity increases with the area of connection of two parts, as does in real life.
+The default value is 0.12 when this line is missing.
+It was given to:
+- solar panels 	0.04
+- service bays 	0

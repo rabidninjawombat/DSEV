@@ -18,6 +18,40 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.3.18: Maddening Heat Part 2
+
+Heat Management
+- Improved game performance for heat management.
+- Vessels will no longer be cooled to just a few degrees above absolute zero while in space.
+- You can now specify a default target temperature for the entire vessel as well as for individual parts.
+See the config file for the WB-2 fusion reactor for an example.
+- Radiators now support multiple coolant resources.
+- Radiators now support coolant loss while under accelleration.
+- Radiators now require ElectricCharge to keep running.
+- Tuned the Supernova and WB-2 thermal outputs. Better have at least a dozen large radiators if you have the fusion engine aboard...
+NOTE: KSP may crash if you have the built-in thermal warning running when the radiators reach maximum. It appears to be game related.
+I suggest you turn off the temperature warning using F10.
+
+Career
+- Redistributed the parts into the new tech tree.
+
+Engines
+- Added surface effects to the Supernova.
+- Added "Ace" ArcJet Rocket Motor.
+
+ISRU
+- Added Water and Minerals detection to the stock scanners.
+- Added Water and Minerals extraction to the stock drill.
+- Added 1.875m ISRU processor. It fits inside the half-hex truss, and is a resized version of the stock ISRU.
+- Removed liquid hydrogen and fusion pellet generation from stock ISRU.
+
+Multipurpose Storage Tanks
+- Added Water, Minerals, and Ore storage templates.
+
+Other
+- Added Masscon Ballast Module.
+- Added Masscon resource. It literally weighs a ton! (1 ton per unit)
+
 0.3.17: Active Radiators! (and Moar Tanks)
 IMPORTANT NOTES
 - This update will break your saves. Please retire any vessels in flight.
