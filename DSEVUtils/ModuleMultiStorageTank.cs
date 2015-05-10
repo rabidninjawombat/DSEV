@@ -33,7 +33,7 @@ namespace WildBlueIndustries
         public bool showLargeDiameter;
 
         [KSPField(isPersistant = true)]
-        public bool toggleDiameters;
+        public bool toggleDiameters = false;
 
         [KSPField(isPersistant = true)]
         public float largeDiameterCapacity = 0f;
@@ -41,10 +41,6 @@ namespace WildBlueIndustries
         [KSPField(isPersistant = true)]
         public float mediumDiameterCapacity = 0f;
 
-        protected bool defaultShowSleeves;
-        protected bool defaultShowBrackets;
-        protected bool defaultShowDecals;
-        protected bool defaultDiameterLarge;
         protected string sleevesObject;
         protected string bracketsObject;
         protected string decalsObject;
@@ -75,6 +71,7 @@ namespace WildBlueIndustries
             ModuleMultiStorageTank storageTank;
 
             showDecals = !showDecals;
+            Log("FRED showDecals: " + showDecals);
 
             setVisibleObjects();
 
@@ -112,6 +109,7 @@ namespace WildBlueIndustries
         [KSPEvent(guiActiveEditor = true, guiActive = false, guiName = "Toggle Diameter", active = true)]
         public void ToggleDiameter()
         {
+            ModuleMultiStorageTank storageTank;
             if (HighLogic.LoadedSceneIsEditor)
             {
                 //If there are parts attached then don't allow the switch.
@@ -124,19 +122,39 @@ namespace WildBlueIndustries
 
                 showLargeDiameter = !showLargeDiameter;
 
-                setVisibleObjects();
+                ShowLargeDiameter(showLargeDiameter);
 
-                //Get the resource switcher
-                WBIResourceSwitcher resourceSwitcher = this.part.FindModuleImplementing<WBIResourceSwitcher>();
-                if (resourceSwitcher == null)
-                    return;
-
-                if (showLargeDiameter)
-                    resourceSwitcher.capacityFactor = largeDiameterCapacity;
-                else
-                    resourceSwitcher.capacityFactor = mediumDiameterCapacity;
-                resourceSwitcher.ReloadTemplate();
+                //Handle symmetrical parts
+                if (HighLogic.LoadedSceneIsEditor)
+                {
+                    foreach (Part symmetryPart in this.part.symmetryCounterparts)
+                    {
+                        storageTank = symmetryPart.GetComponent<ModuleMultiStorageTank>();
+                        storageTank.ShowLargeDiameter(showLargeDiameter);
+                    }
+                }
             }
+        }
+
+        public void ShowLargeDiameter(bool isLargeDiameter)
+        {
+            showLargeDiameter = isLargeDiameter;
+
+            setVisibleObjects();
+
+            //Get the resource switcher
+            WBIResourceSwitcher resourceSwitcher = this.part.FindModuleImplementing<WBIResourceSwitcher>();
+            if (resourceSwitcher == null)
+                return;
+
+            //Reset capacity
+            if (showLargeDiameter)
+                resourceSwitcher.capacityFactor = largeDiameterCapacity;
+            else
+                resourceSwitcher.capacityFactor = mediumDiameterCapacity;
+
+            //Now reload resource template
+            resourceSwitcher.ReloadTemplate();
         }
 
         public void ShowBrackets(bool bracketsAreVisible)
@@ -163,37 +181,6 @@ namespace WildBlueIndustries
         protected override void getProtoNodeValues(ConfigNode protoNode)
         {
             base.getProtoNodeValues(protoNode);
-            string value;
-
-            value = protoNode.GetValue("defaultShowSleeves");
-            if (string.IsNullOrEmpty(value) == false)
-                defaultShowSleeves = bool.Parse(value);
-
-            value = protoNode.GetValue("defaultShowBrackets");
-            if (string.IsNullOrEmpty(value) == false)
-                defaultShowBrackets = bool.Parse(value);
-
-            value = protoNode.GetValue("defaultShowDecals");
-            if (string.IsNullOrEmpty(value) == false)
-                defaultShowDecals = bool.Parse(value);
-
-            value = protoNode.GetValue("toggleDiameters");
-            if (string.IsNullOrEmpty(value) == false)
-            {
-                toggleDiameters = bool.Parse(value);
-
-                value = protoNode.GetValue("defaultDiameterLarge");
-                if (string.IsNullOrEmpty(value) == false)
-                    defaultDiameterLarge = bool.Parse(value);
-
-                value = protoNode.GetValue("largeDiameterCapacity");
-                if (string.IsNullOrEmpty(value) == false)
-                    largeDiameterCapacity = float.Parse(value);
-
-                value = protoNode.GetValue("mediumDiameterCapacity");
-                if (string.IsNullOrEmpty(value) == false)
-                    mediumDiameterCapacity = float.Parse(value);
-            }
 
             sleevesObject = protoNode.GetValue("sleevesObject");
 
@@ -207,20 +194,6 @@ namespace WildBlueIndustries
             base.OnLoad(node);
 
             setObject(-1);
-        }
-
-        public override void OnSave(ConfigNode node)
-        {
-            base.OnSave(node);
-            string value;
-
-            value = node.GetValue("showLargeDiameter");
-            if (string.IsNullOrEmpty(value))
-                node.AddValue("showLargeDiameter", showLargeDiameter);
-
-            value = node.GetValue("toggleDiameters");
-            if (string.IsNullOrEmpty(value))
-                node.AddValue("toggleDiameters", toggleDiameters);
         }
 
         public override void OnStart(StartState state)
@@ -253,14 +226,6 @@ namespace WildBlueIndustries
                 Events["ToggleDiameter"].active = false;
             }
 
-            if (HighLogic.LoadedSceneIsEditor)
-            {
-                showSleeves = defaultShowSleeves;
-                showBrackets = defaultShowBrackets;
-                showDecals = defaultShowDecals;
-                showLargeDiameter = defaultDiameterLarge;
-            }
-
             setVisibleObjects();
         }
 
@@ -291,7 +256,11 @@ namespace WildBlueIndustries
                 visibleObjects.Add(meshIndexes[bracketsObject]);
 
             if (showDecals)
-                visibleObjects.Add(meshIndexes[decalsObject]);
+            {
+                string[] decals = decalsObject.Split(new char[] {','});
+                foreach (string decal in decals)
+                    visibleObjects.Add(meshIndexes[decal]);
+            }
 
             if (toggleDiameters)
             {

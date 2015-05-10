@@ -16,94 +16,63 @@ namespace WildBlueIndustries
 {
     public class ModuleMasscon : ExtendedPartModule
     {
-        private const float smallAmountDelta = 0.1f;
-        private const float bigAmountDelta = 1.0f;
+        [KSPField(guiActiveEditor = true, guiName = "Mass", guiFormat = "f3", isPersistant = true)]
+        public float partMass = 0f;
 
-        [KSPField(guiActiveEditor = true, guiActive = false, guiName = "Change Amount")]
-        public float amountDelta = 0.1f;
+        private MassconWindow massconView = null;
 
-        [KSPEvent(guiActiveEditor = true, guiActive = false, guiName = "+ Masscon", active = true)]
-        public void IncrementMasscon()
+        [KSPEvent(guiActiveEditor = true)]
+        public void EditMass()
         {
-            PartResource massconResource = this.part.Resources["Masscon"];
-
-            //Sanity checks
-            if (massconResource == null)
-                return;
-            if (massconResource.amount == massconResource.maxAmount)
-                return;
-
-            //Increment the masscon amount
-            massconResource.amount += amountDelta;
-            if (massconResource.amount > massconResource.maxAmount)
-                massconResource.amount = massconResource.maxAmount;
-
-            //Update symmetry parts
-            foreach (Part symmetryPart in this.part.symmetryCounterparts)
-                symmetryPart.Resources["Masscon"].amount = massconResource.amount;
+            if (massconView == null)
+            {
+                PartResourceDefinitionList definitions = PartResourceLibrary.Instance.resourceDefinitions;
+                
+                massconView = new MassconWindow();
+                massconView.massUpdateDelegate = OnUpdateMass;
+            }
+            massconView.SetVisible(true);
         }
 
-        [KSPEvent(guiActiveEditor = true, guiActive = false, guiName = "- Masscon", active = true)]
-        public void DecrementMasscon()
+        public void OnUpdateMass(float mass)
         {
-            PartResource massconResource = this.part.Resources["Masscon"];
+            ModuleMasscon massconModule;
+            UpdateMass(mass);
 
-            //Sanity checks
-            if (massconResource == null)
-                return;
-            if (massconResource.amount == 0f)
-                return;
-
-            //Decrement the masscon amount
-            massconResource.amount -= amountDelta;
-            if (massconResource.amount < 0.0001)
-                massconResource.amount = 0f;
-
-            //Update symmetry parts
             foreach (Part symmetryPart in this.part.symmetryCounterparts)
-                symmetryPart.Resources["Masscon"].amount = massconResource.amount;
+            {
+                massconModule = symmetryPart.GetComponent<ModuleMasscon>();
+                massconModule.UpdateMass(mass);
+            }
         }
 
-        [KSPEvent(guiActiveEditor = true, guiActive = false, guiName = "Toggle Delta", active = true)]
-        public void ToggleAmountChange()
+        public void UpdateMass(float mass)
         {
-            if (amountDelta == smallAmountDelta)
-                amountDelta = bigAmountDelta;
-            else
-                amountDelta = smallAmountDelta;
-        }
-
-        [KSPEvent(guiActiveEditor = false, guiActive = true, guiName = "Balance Masscon", active = true)]
-        public void BalanceMasscon()
-        {
-            double totalMasscon = this.part.Resources["Masscon"].amount;
-            double massconPerPart = 0f;
-
-            if (this.part.symmetryCounterparts.Count == 0)
-                return;
-
-            //Get the total amount of masscon
-            foreach (Part symmetryPart in this.part.symmetryCounterparts)
-                totalMasscon += symmetryPart.Resources["Masscon"].amount;
-
-            //Now divide it up between the symmetry parts.
-            massconPerPart = totalMasscon / this.part.symmetryCounterparts.Count;
-            foreach (Part symmetryPart in this.part.symmetryCounterparts)
-                symmetryPart.Resources["Masscon"].amount = massconPerPart;
+            this.part.mass = mass;
+            partMass = mass;
         }
 
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
+
+            if (partMass > 0f)
+                this.part.mass = partMass;
+            else
+                partMass = this.part.mass;
+        }
+
+        public override void OnLoad(ConfigNode node)
+        {
+            base.OnLoad(node);
+
+            if (partMass > 0f)
+                this.part.mass = partMass;
         }
 
         public override string GetInfo()
         {
             return "Use the action menu to add or remove Masscon from the module.";
-        }
-
-        public void OnGUI()
-        {
         }
     }
 }

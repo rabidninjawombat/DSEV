@@ -25,3 +25,14 @@
         @resourceName = LiquidFuel
     }
 }
+
+@PART[AJ5ArcJetEngine]
+{
+    @MODULE[ModuleEnginesFX]
+    {
+        @PROPELLANT
+        {
+            @name = LiquidFuel
+        }
+    }
+}

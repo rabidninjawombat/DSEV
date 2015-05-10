@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MassconWindow.cs" />
     <Compile Include="ModuleArcJetEngine.cs" />
     <Compile Include="ModuleEnginesFXWBI.cs" />
     <Compile Include="ModuleFusionReactor.cs" />

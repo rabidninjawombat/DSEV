@@ -150,7 +150,7 @@ namespace WildBlueIndustries
             else if (reactorState == EReactorStates.Charging || reactorState == EReactorStates.Idling)
             {
                 reactorState = EReactorStates.Off;
-                reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart - currentElectricCharge);
+                reactorStatus = EReactorStates.Off + string.Format(" Needs {0:#.#} EC", ecNeededToStart - currentElectricCharge);
                 reactorIsOn = false;
             }
 
@@ -344,21 +344,25 @@ namespace WildBlueIndustries
                 //If we have enough charge then we can start the engine.
                 reactorIsOn = true;
                 currentElectricCharge = 0f;
+                ModuleGimbal gimbal;
                 Events["ToggleReactor"].guiName = kShutdownEngine;
                 if (multiModeEngine.runningPrimary)
                 {
                     primaryEngine.Activate();
+                    primaryEngine.part.force_activate();
                     primaryEngine.ShowParticleEffects();
+                    gimbal = primaryEngine.part.FindModuleImplementing<ModuleGimbal>();
+                    if (gimbal != null)
+                        gimbal.OnActive();
                 }
                 else
                 {
                     secondaryEngine.Activate();
+                    secondaryEngine.part.force_activate();
                     secondaryEngine.ShowParticleEffects();
-                }
-                ModuleGimbal gimbal = this.part.FindModuleImplementing<ModuleGimbal>();
-                if (gimbal != null)
-                {
-                    gimbal.OnActive();
+                    gimbal = secondaryEngine.part.FindModuleImplementing<ModuleGimbal>();
+                    if (gimbal != null)
+                        gimbal.OnActive();
                 }
             }
 
