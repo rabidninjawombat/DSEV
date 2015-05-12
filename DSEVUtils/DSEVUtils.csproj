@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DockingHelper.cs" />
     <Compile Include="MassconWindow.cs" />
     <Compile Include="ModuleArcJetEngine.cs" />
     <Compile Include="ModuleEnginesFXWBI.cs" />

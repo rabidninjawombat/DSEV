@@ -24,24 +24,21 @@ Textures
 - Converted all textures to dds format.
 
 ISP Enhancements
-- Buffed Supernova ISP to 35,500 sec.
+- Buffed Supernova ISP to 35,000 sec.
 - Buffed ArcJet RCS thrusters to 5,000 sec.
 - Buffed "Ace" ArcJet engine to 5,000 sec.
 IMPORTANT NOTE: Liquid Hydrogen is not particularly dense so you need a lot of it to get deltaV comparable to stock LiquidFuel. Plan your vessels accordingly. The game changes that affected the way how engines compute fuel use, combined with the CRP's move from 5L units to 1L units, has resulted in major tweaks needed for ISP. Remember, you can always use the MM_LiquidFuel patch to convert the ArcJect RCS thrusters, ArcJet engine, and Supernova to use LiquidFuel.
 
 ISRU
-- The Compact ISRU now produces: LH2, Monoprop, LiquidFuel, Oxidizer, LFO, FusionPellets.
+- The Compact ISRU now produces: LH2, Monoprop, LiquidFuel, Oxidizer, LFO, Coolant, and FusionPellets.
+- The Compact ISRU now costs more.
 
 Fuel Tanks
 - Multipurpose Storage Tanks will supply their resources if radially attached to other tanks, courtesy of CrossFeedEnabler.
 
 Supernova
-- Reduced mass of the Supernova to 20 tonnes. It's finally out of the prototype stage!
-- Added normal map! :)
-- Added animated heat! :)
-
-WB-2 Fusion Reactor
-- Reduced the mass to 1.25 tonnes.
+- Added normal map.
+- Added animated heat.
 
 Masscon
 - Removed Masscon resource in favor of an editor window that lets you enter the part's desired mass.
@@ -55,6 +52,7 @@ Bug Fixes
 - Fixed an issue where tank decals refused to hide themselves as directed.
 - Fixed an issue where radiators would explode during high timewarp.
 - Fixed an issue where the Supernova wasn't showing all of its engine flame effects.
+================
 
 0.3.19: Hotfix
 - The Supernova now properly shows its engine flame.

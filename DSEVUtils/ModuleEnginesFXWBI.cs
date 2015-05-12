@@ -34,22 +34,25 @@ namespace WildBlueIndustries
                 onActiveDelegate(this.engineID, this.staged);
         }
 
-        public void ShowParticleEffects()
+        public void ShowParticleEffects(bool forceOn = false)
         {
             KSPParticleEmitter[] emitters = part.GetComponentsInChildren<KSPParticleEmitter>();
 
             if (emitters == null)
                 return;
 
+            Debug.Log("FRED staged: " + staged);
             foreach (KSPParticleEmitter emitter in emitters)
             {
                 //If the emitter is on the list then show it
                 if (emitter.name == this.runningEffectName)
                 {
-                    if (currentThrottle > 0 && isOperational)
+                    if ((currentThrottle > 0 && isOperational) || forceOn)
                     {
+                        Debug.Log("FRED " + emitter.name + " activated");
                         emitter.emit = true;
                         emitter.enabled = true;
+                        emitter.Emit();
                     }
                     else
                     {

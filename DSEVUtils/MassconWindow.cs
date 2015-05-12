@@ -21,7 +21,7 @@ namespace WildBlueIndustries
         private string massAmount = "0";
 
         public MassconWindow() :
-        base("Enter exact amount", 300, 200)
+        base("Enter exact amount", 300, 150)
         {
             Resizable = false;
         }

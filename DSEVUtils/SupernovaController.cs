@@ -137,10 +137,7 @@ namespace WildBlueIndustries
                     Events["ToggleReactor"].guiName = kShutdownEngine;
 
                     //Start your engine
-                    if (multiModeEngine.runningPrimary)
-                        primaryEngine.Activate();
-                    else
-                        secondaryEngine.Activate();
+                    StartEngine();
                 }
 
                 //Ok, we're done
@@ -246,16 +243,12 @@ namespace WildBlueIndustries
 
             if (reactorIsOn)
             {
-                this.Activate();
                 reactorState = EReactorStates.Idling;
                 reactorStatus = reactorState.ToString();
                 Events["ToggleReactor"].guiName = kShutdownEngine;
 
                 //Start your engine
-                if (multiModeEngine.runningPrimary)
-                    primaryEngine.Activate();
-                else
-                    secondaryEngine.Activate();
+                StartEngine();
             }
 
             if (reactorState == EReactorStates.None)
@@ -263,23 +256,6 @@ namespace WildBlueIndustries
                 currentElectricCharge = 0f;
                 reactorState = EReactorStates.Off;
                 reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
-            }
-        }
-
-        public void Activate()
-        {
-            if (reactorIsOn == false && (primaryEngine.staged || secondaryEngine.staged))
-            {
-                primaryEngine.Events["Shutdown"].Invoke();
-                primaryEngine.currentThrottle = 0;
-                primaryEngine.requestedThrottle = 0;
-
-                secondaryEngine.Events["Shutdown"].Invoke();
-                secondaryEngine.currentThrottle = 0;
-                secondaryEngine.requestedThrottle = 0;
-
-                if (reactorState != EReactorStates.Charging)
-                    Events["ToggleReactor"].guiName = kStartEngine;
             }
         }
 
@@ -342,31 +318,28 @@ namespace WildBlueIndustries
                 }
 
                 //If we have enough charge then we can start the engine.
-                reactorIsOn = true;
-                currentElectricCharge = 0f;
-                ModuleGimbal gimbal;
-                Events["ToggleReactor"].guiName = kShutdownEngine;
-                if (multiModeEngine.runningPrimary)
-                {
-                    primaryEngine.Activate();
-                    primaryEngine.part.force_activate();
-                    primaryEngine.ShowParticleEffects();
-                    gimbal = primaryEngine.part.FindModuleImplementing<ModuleGimbal>();
-                    if (gimbal != null)
-                        gimbal.OnActive();
-                }
-                else
-                {
-                    secondaryEngine.Activate();
-                    secondaryEngine.part.force_activate();
-                    secondaryEngine.ShowParticleEffects();
-                    gimbal = secondaryEngine.part.FindModuleImplementing<ModuleGimbal>();
-                    if (gimbal != null)
-                        gimbal.OnActive();
-                }
+                StartEngine();
             }
 
             return false;
+        }
+
+        public void StartEngine()
+        {
+            reactorIsOn = true;
+            currentElectricCharge = 0f;
+            Events["ToggleReactor"].guiName = kShutdownEngine;
+            if (multiModeEngine.runningPrimary)
+            {
+                primaryEngine.Activate();
+                primaryEngine.part.force_activate();
+            }
+            else
+            {
+                secondaryEngine.Activate();
+                secondaryEngine.part.force_activate();
+                secondaryEngine.staged = true;
+            }
         }
 
         public void ConsumeFuel()
