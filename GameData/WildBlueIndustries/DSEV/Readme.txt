@@ -36,6 +36,10 @@ ISRU
 Fuel Tanks
 - Multipurpose Storage Tanks will supply their resources if radially attached to other tanks, courtesy of CrossFeedEnabler.
 
+WB-2 Fusion Reactor
+- The reactor may now be started through staging.
+- If the reactor doesn't have enough ElectricCharge to start then it is now smart enough to not drain the ship's electricity.
+
 Supernova
 - Added normal map.
 - Added animated heat.
@@ -46,6 +50,10 @@ Masscon
 
 Resources
 - Removed Masscon resource as it's no longer needed.
+
+Docking Ports
+- When you select a HexPort on the target vessel and Set As Target, it will light up automatically, turning off other lit HexPorts.
+- HexPort now provides fuel cross-feeding, courtesy of CrossFeedEnabler. No more fuel line trickery needed! :)
 
 Bug Fixes
 - Fixed an issue where the orange Multipurpose Storage Tanks would not remember what size they were.

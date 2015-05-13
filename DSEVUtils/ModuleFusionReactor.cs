@@ -38,6 +38,13 @@ namespace WildBlueIndustries
             return base.GetInfo() + string.Format("\nRequires {0:F2}ec to start.", ecNeededToStart);
         }
 
+        [KSPAction("Start Reactor", KSPActionGroup.Stage)]
+        public void StartReactorStaged(KSPActionParam param)
+        {
+            if (reactorIsOn == false)
+                ToggleReactor();
+        }
+
         [KSPAction("Start Reactor")]
         public void StartReactorAction(KSPActionParam param)
         {
@@ -70,6 +77,7 @@ namespace WildBlueIndustries
                 {
                     this.part.RequestResource("ElectricCharge", -ecObtained);
                     ScreenMessages.PostScreenMessage("Fully charge the reactor before starting.", 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                    this.part.RequestResource("ElectricCharge", -ecObtained);
                     return;
                 }
 
