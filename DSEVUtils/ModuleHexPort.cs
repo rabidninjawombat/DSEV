@@ -116,7 +116,6 @@ namespace WildBlueIndustries
 
             if (this.objectTransforms.Count > 0 && this.objectNames.Count > 0)
                 SetVisibleObjects();
-
         }
     }
 }

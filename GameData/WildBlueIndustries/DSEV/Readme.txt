@@ -18,6 +18,17 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.3.21: Blackjack
+
+Docking Ports
+- When selecting "Control From Here" on a HexPort, its glow panels will automatically light up.
+
+Bug Fixes
+- When selecting Toggle Engine or Activate Engine from an action group, the Supernova's flame effects will now appear properly.
+- Cleaned up the Action Group items for the Supernova.
+NOTE: You might need to redo your action groups.
+
+
 0.3.20: Bug Stomping
 
 Textures
@@ -60,7 +71,7 @@ Bug Fixes
 - Fixed an issue where tank decals refused to hide themselves as directed.
 - Fixed an issue where radiators would explode during high timewarp.
 - Fixed an issue where the Supernova wasn't showing all of its engine flame effects.
-================
+
 
 0.3.19: Hotfix
 - The Supernova now properly shows its engine flame.

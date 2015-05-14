@@ -79,40 +79,6 @@ namespace WildBlueIndustries
             debugMenu.ToggleVisible();
         }
 
-        [KSPAction(kStartEngine)]
-        public void StartReactorAction(KSPActionParam param)
-        {
-            StopReactorAction(param);
-            ToggleReactor();
-            if (reactorState == EReactorStates.Charging)
-                ScreenMessages.PostScreenMessage(kChargingCapacitor, 5.0f, ScreenMessageStyle.UPPER_CENTER);
-            else if (reactorState == EReactorStates.Idling)
-                ScreenMessages.PostScreenMessage(kEngineStarted, 5.0f, ScreenMessageStyle.UPPER_CENTER);
-        }
-
-        [KSPAction(kShutdownEngine)]
-        public void StopReactorAction(KSPActionParam param)
-        {
-            primaryEngine.Events["Shutdown"].Invoke();
-            primaryEngine.currentThrottle = 0;
-            primaryEngine.requestedThrottle = 0;
-
-            secondaryEngine.Events["Shutdown"].Invoke();
-            secondaryEngine.currentThrottle = 0;
-            secondaryEngine.requestedThrottle = 0;
-
-            Events["ToggleReactor"].guiName = kStartEngine;
-
-            if (reactorState != EReactorStates.Charging)
-                currentElectricCharge = 0f;
-            reactorState = EReactorStates.Off;
-            if (currentElectricCharge == 0f)
-                reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
-            else
-                reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart - currentElectricCharge);
-            reactorIsOn = false;
-        }
-
         [KSPEvent(guiActive = true, guiName = "Start Engine", active = true, externalToEVAOnly = false, unfocusedRange = 3.0f, guiActiveUnfocused = true)]
         public void ToggleReactor()
         {
@@ -153,27 +119,17 @@ namespace WildBlueIndustries
 
             else if (reactorState == EReactorStates.Running)
             {
-                StopReactorAction(null);
+                ShutdownReactorAndEngine();
             }
 
+            /*
             //Just set the GUI
             if (reactorIsOn)
-            {
                 Events["ToggleReactor"].guiName = kShutdownEngine;
-            }
 
             else
-            {
                 Events["ToggleReactor"].guiName = kStartEngine;
-            }
-        }
-
-        public void DebugReset()
-        {
-            StopReactorAction(null);
-            reactorIsOn = false;
-            currentElectricCharge = 0f;
-            reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
+             */
         }
 
         #endregion
@@ -216,53 +172,26 @@ namespace WildBlueIndustries
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
-            List<ModuleEnginesFXWBI> engineList = this.part.FindModulesImplementing<ModuleEnginesFXWBI>();
 
-            multiModeEngine = this.part.FindModuleImplementing<MultiModeEngine>();
-            multiModeEngine.autoSwitch = false;
-            multiModeEngine.Events["DisableAutoSwitch"].guiActive = false;
-            multiModeEngine.Events["DisableAutoSwitch"].guiActiveEditor = false;
-            multiModeEngine.Events["EnableAutoSwitch"].guiActive = false;
-            multiModeEngine.Events["EnableAutoSwitch"].guiActiveEditor = false;
+            //Hide gui elements that we don't need.
+            HideGUI();
 
-            foreach (ModuleEnginesFXWBI engine in engineList)
-            {
-                if (engine.engineID == primaryEngineID)
-                    primaryEngine = engine;
-                else
-                    secondaryEngine = engine;
-
-                engine.onActiveDelegate = OnEngineActive;
-                engine.Events["Activate"].guiActive = false;
-                engine.Events["Shutdown"].guiActive = false;
-                engine.Events["Activate"].guiActiveEditor = false;
-                engine.Events["Shutdown"].guiActiveEditor = false;
-            }
-
-            Events["ShowDebug"].guiActive = showDebugButton;
-
-            if (reactorIsOn)
-            {
-                reactorState = EReactorStates.Idling;
-                reactorStatus = reactorState.ToString();
-                Events["ToggleReactor"].guiName = kShutdownEngine;
-
-                //Start your engine
-                StartEngine();
-            }
-
-            if (reactorState == EReactorStates.None)
-            {
-                currentElectricCharge = 0f;
-                reactorState = EReactorStates.Off;
-                reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
-            }
+            //Setup the engine
+            SetEngineStateOnStart();
         }
 
         public override void OnUpdate()
         {
             base.OnUpdate();
 
+            //We don't have access to the Update or FixedUpdate or OnUpdate or OnFixedUpdate methods from
+            //the engine module. We need to lend a hand.
+            if (multiModeEngine.runningPrimary)
+                primaryEngine.UpdateEngineState();
+            else
+                secondaryEngine.UpdateEngineState();
+
+            //Set engine temperature
             engineTemperature = String.Format("{0:#.##}K", this.part.temperature);
         }
 
@@ -296,6 +225,66 @@ namespace WildBlueIndustries
         #endregion
 
         #region Helpers
+
+        public void SetEngineStateOnStart()
+        {
+            if (reactorIsOn)
+            {
+                reactorState = EReactorStates.Idling;
+                reactorStatus = reactorState.ToString();
+                Events["ToggleReactor"].guiName = kShutdownEngine;
+
+                //Start your engine
+                StartEngine();
+            }
+
+            else if (reactorState == EReactorStates.None)
+            {
+                currentElectricCharge = 0f;
+                reactorState = EReactorStates.Off;
+                reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
+            }
+        }
+
+        public void HideGUI()
+        {
+            List<ModuleEnginesFXWBI> engineList = this.part.FindModulesImplementing<ModuleEnginesFXWBI>();
+
+            //Hide multimode switcher gui
+            multiModeEngine = this.part.FindModuleImplementing<MultiModeEngine>();
+            multiModeEngine.autoSwitch = false;
+            multiModeEngine.Events["DisableAutoSwitch"].guiActive = false;
+            multiModeEngine.Events["DisableAutoSwitch"].guiActiveEditor = false;
+            multiModeEngine.Events["EnableAutoSwitch"].guiActive = false;
+            multiModeEngine.Events["EnableAutoSwitch"].guiActiveEditor = false;
+
+            //Hide engine gui
+            foreach (ModuleEnginesFXWBI engine in engineList)
+            {
+                if (engine.engineID == primaryEngineID)
+                    primaryEngine = engine;
+                else
+                    secondaryEngine = engine;
+
+                engine.onActiveDelegate = OnEngineActive;
+                engine.Events["Activate"].guiActive = false;
+                engine.Events["Shutdown"].guiActive = false;
+                engine.Events["Activate"].guiActiveEditor = false;
+                engine.Events["Shutdown"].guiActiveEditor = false;
+            }
+
+            //Show/hide debug button
+            Events["ShowDebug"].guiActive = showDebugButton;
+        }
+
+        public void DebugReset()
+        {
+            ShutdownReactorAndEngine();
+            reactorIsOn = false;
+            currentElectricCharge = 0f;
+            reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
+        }
+
         public bool ReactorNeedsCharge()
         {
             if (reactorState == EReactorStates.Charging)
@@ -307,7 +296,7 @@ namespace WildBlueIndustries
                 if (currentElectricCharge < kMinimumECToCharge)
                 {
                     ScreenMessages.PostScreenMessage(kOutOfEC, 5.0f, ScreenMessageStyle.UPPER_CENTER);
-                    StopReactorAction(null);
+                    ShutdownReactorAndEngine();
                     return true;
                 }
 
@@ -324,6 +313,28 @@ namespace WildBlueIndustries
             return false;
         }
 
+        public void ShutdownReactorAndEngine()
+        {
+            primaryEngine.Events["Shutdown"].Invoke();
+            primaryEngine.currentThrottle = 0;
+            primaryEngine.requestedThrottle = 0;
+
+            secondaryEngine.Events["Shutdown"].Invoke();
+            secondaryEngine.currentThrottle = 0;
+            secondaryEngine.requestedThrottle = 0;
+
+            Events["ToggleReactor"].guiName = kStartEngine;
+
+            if (reactorState != EReactorStates.Charging)
+                currentElectricCharge = 0f;
+            reactorState = EReactorStates.Off;
+            if (currentElectricCharge == 0f)
+                reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart);
+            else
+                reactorStatus = EReactorStates.Off + string.Format(" Needs {0:F2} EC", ecNeededToStart - currentElectricCharge);
+            reactorIsOn = false;
+        }
+
         public void StartEngine()
         {
             reactorIsOn = true;
@@ -333,12 +344,14 @@ namespace WildBlueIndustries
             {
                 primaryEngine.Activate();
                 primaryEngine.part.force_activate();
+                primaryEngine.ShowParticleEffects(true);
             }
             else
             {
                 secondaryEngine.Activate();
                 secondaryEngine.part.force_activate();
                 secondaryEngine.staged = true;
+                secondaryEngine.ShowParticleEffects(true);
             }
         }
 
@@ -380,9 +393,9 @@ namespace WildBlueIndustries
             }
         }
 
-        public void OnEngineActive(string engineID, bool isStaged)
+        public void OnEngineActive(string engineID, bool isRunning)
         {
-            if (reactorIsOn == false && isStaged)
+            if (reactorIsOn == false && isRunning)
             {
                 primaryEngine.Events["Shutdown"].Invoke();
                 primaryEngine.currentThrottle = 0;

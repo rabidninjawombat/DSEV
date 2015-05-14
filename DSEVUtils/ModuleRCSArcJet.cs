@@ -192,7 +192,6 @@ namespace WildBlueIndustries
 
                 if (ecSupplied < ecPerTimeTick)
                 {
-                    Debug.Log("Not enough EC, shutting off RCS");
                     DeactivateFX();
                     return;
                 }

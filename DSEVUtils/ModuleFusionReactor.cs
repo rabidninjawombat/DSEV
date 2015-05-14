@@ -45,13 +45,6 @@ namespace WildBlueIndustries
                 ToggleReactor();
         }
 
-        [KSPAction("Start Reactor")]
-        public void StartReactorAction(KSPActionParam param)
-        {
-            if (reactorIsOn == false)
-                ToggleReactor();
-        }
-
         [KSPAction("Stop Reactor")]
         public void StopReactorAction(KSPActionParam param)
         {

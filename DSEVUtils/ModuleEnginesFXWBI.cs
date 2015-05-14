@@ -20,13 +20,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 */
 namespace WildBlueIndustries
 {
-    public delegate void OnActiveDelegate(string engineID, bool isStaged);
+    public delegate void OnActiveDelegate(string engineID, bool isRunning);
 
     public class ModuleEnginesFXWBI : ModuleEnginesFX
     {
-        private float _lastCurrentThrottle = -1;
         public OnActiveDelegate onActiveDelegate;
 
+        private float _lastCurrentThrottle = -1;
+
+        //Called when the player hits the spacebar
         public override void OnActive()
         {
             base.OnActive();
@@ -41,7 +43,6 @@ namespace WildBlueIndustries
             if (emitters == null)
                 return;
 
-            Debug.Log("FRED staged: " + staged);
             foreach (KSPParticleEmitter emitter in emitters)
             {
                 //If the emitter is on the list then show it
@@ -49,7 +50,6 @@ namespace WildBlueIndustries
                 {
                     if ((currentThrottle > 0 && isOperational) || forceOn)
                     {
-                        Debug.Log("FRED " + emitter.name + " activated");
                         emitter.emit = true;
                         emitter.enabled = true;
                         emitter.Emit();
@@ -70,13 +70,19 @@ namespace WildBlueIndustries
             }
         }
 
-        public override void OnFixedUpdate()
+        //We have no access to OnUpdate or OnUpdateFixed so we need a helper...
+        public void UpdateEngineState()
         {
-            base.OnFixedUpdate();
-
             if (_lastCurrentThrottle == currentThrottle)
                 return;
             _lastCurrentThrottle = currentThrottle;
+
+            //If the engine is running but not staged, tell the delegate.
+            if ((isOperational && EngineIgnited) && staged == false)
+            {
+                if (onActiveDelegate != null)
+                    onActiveDelegate(this.engineID, true);
+            }
 
             ShowParticleEffects();
         }
