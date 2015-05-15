@@ -44,6 +44,9 @@ namespace WildBlueIndustries
         public FXGroup soundClip = null;
         protected bool soundIsPlaying = false;
 
+        PartResourceDefinitionList definitions = PartResourceLibrary.Instance.resourceDefinitions;
+        PartResourceDefinition electricChargeDef;
+
         [KSPAction("RCS On")]
         public void ActionRCSOn(KSPActionParam param)
         {
@@ -85,6 +88,9 @@ namespace WildBlueIndustries
 
             if (ecRequired == 0)
                 ecRequired = kDefaultECRequired;
+
+            //Get the resource definition for electric charge.
+            electricChargeDef = definitions["ElectricCharge"];
         }
 
         public void LoadSoundFX()
@@ -187,13 +193,19 @@ namespace WildBlueIndustries
             //If RCS is on and enabled, then consume electricity
             if (isRCSOn)
             {
-                double ecPerTimeTick = ecRequired * TimeWarp.fixedDeltaTime;
-                double ecSupplied = this.part.vessel.rootPart.RequestResource("ElectricCharge", ecPerTimeTick);
+                Vessel.ActiveResource electricCharge = this.part.vessel.GetActiveResource(electricChargeDef);
+                double ecPerTimeTick = ecRequired * TimeWarp.fixedDeltaTime * thrusterPower;
 
-                if (ecSupplied < ecPerTimeTick)
+                if (electricCharge != null)
                 {
-                    DeactivateFX();
-                    return;
+                    if (electricCharge.amount < ecPerTimeTick)
+                    {
+                        DeactivateFX();
+                        return;
+                    }
+
+                    //We do, so take our share.
+                    electricCharge.amount -= ecPerTimeTick;
                 }
             }
 

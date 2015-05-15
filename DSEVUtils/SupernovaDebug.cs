@@ -21,8 +21,6 @@ namespace WildBlueIndustries
         {
             GUILayout.BeginVertical();
 
-            supernovaController.requiresECToStart = GUILayout.Toggle(supernovaController.requiresECToStart, "EC required to start");
-
             if (GUILayout.Button("Debug Reset"))
                 supernovaController.DebugReset();
 

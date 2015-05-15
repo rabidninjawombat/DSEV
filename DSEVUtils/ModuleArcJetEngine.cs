@@ -90,16 +90,23 @@ namespace WildBlueIndustries
                 return;
 
             //Do we have enough electricity to run the engine?
+            Vessel.ActiveResource electricCharge = this.part.vessel.GetActiveResource(electricChargeDef);
             double ecPerTimeTick = ecRequired * TimeWarp.fixedDeltaTime * engine.currentThrottle;
-            double ecSupplied = this.part.vessel.rootPart.RequestResource(electricChargeDef.id, ecPerTimeTick, ResourceFlowMode.ALL_VESSEL);
 
-            if (ecSupplied < ecPerTimeTick)
+            if (electricCharge != null)
             {
-                engine.currentThrottle = 0;
-                engine.requestedThrottle = 0;
-                engine.flameout = true;
-                engine.Shutdown();
-                ScreenMessages.PostScreenMessage(kOutOfFuel, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                if (electricCharge.amount < ecPerTimeTick)
+                {
+                    engine.currentThrottle = 0;
+                    engine.requestedThrottle = 0;
+                    engine.flameout = true;
+                    engine.Shutdown();
+                    ScreenMessages.PostScreenMessage(kOutOfFuel, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                    return;
+                }
+
+                //We do, so take our share.
+                electricCharge.amount -= ecPerTimeTick;
             }
         }
 

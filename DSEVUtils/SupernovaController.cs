@@ -121,15 +121,6 @@ namespace WildBlueIndustries
             {
                 ShutdownReactorAndEngine();
             }
-
-            /*
-            //Just set the GUI
-            if (reactorIsOn)
-                Events["ToggleReactor"].guiName = kShutdownEngine;
-
-            else
-                Events["ToggleReactor"].guiName = kStartEngine;
-             */
         }
 
         #endregion
@@ -397,6 +388,13 @@ namespace WildBlueIndustries
         {
             if (reactorIsOn == false && isRunning)
             {
+                if (currentElectricCharge >= ecNeededToStart)
+                {
+                    reactorState = EReactorStates.Off;
+                    ToggleReactor();
+                    return;
+                }
+
                 primaryEngine.Events["Shutdown"].Invoke();
                 primaryEngine.currentThrottle = 0;
                 primaryEngine.requestedThrottle = 0;

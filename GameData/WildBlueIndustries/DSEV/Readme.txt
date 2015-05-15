@@ -22,11 +22,18 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 Docking Ports
 - When selecting "Control From Here" on a HexPort, its glow panels will automatically light up.
+- Had to remove CrossFeedEnabler from HexPorts due to lag issues. :(
 
 Bug Fixes
+- ArcJet motors now properly request ElectricCharge from the vessel.
+- Fixed an issue where radiators were not taking on heat properly.
+- Radiators now properly request electrical charge from the vessel.
 - When selecting Toggle Engine or Activate Engine from an action group, the Supernova's flame effects will now appear properly.
 - Cleaned up the Action Group items for the Supernova.
 NOTE: You might need to redo your action groups.
+
+Other
+- Discovery II reference design added to the DSEV/ReferenceDesigns folder. This is a .craft file that you can use in your own saves. Simply copy the .craft file to the KerbalSpaceProgram/Ships/VAB folder.
 
 
 0.3.20: Bug Stomping
