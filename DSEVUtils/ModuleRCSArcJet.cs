@@ -193,19 +193,14 @@ namespace WildBlueIndustries
             //If RCS is on and enabled, then consume electricity
             if (isRCSOn)
             {
-                Vessel.ActiveResource electricCharge = this.part.vessel.GetActiveResource(electricChargeDef);
                 double ecPerTimeTick = ecRequired * TimeWarp.fixedDeltaTime * thrusterPower;
+                double ecObtained = this.part.RequestResource("ElectricCharge", ecPerTimeTick, ResourceFlowMode.ALL_VESSEL);
 
-                if (electricCharge != null)
+                if (ecObtained / ecPerTimeTick < 0.999)
                 {
-                    if (electricCharge.amount < ecPerTimeTick)
-                    {
-                        DeactivateFX();
-                        return;
-                    }
-
-                    //We do, so take our share.
-                    electricCharge.amount -= ecPerTimeTick;
+                    this.part.RequestResource("ElectricCharge", -ecObtained);
+                    DeactivateFX();
+                    return;
                 }
             }
 

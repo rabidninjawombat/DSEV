@@ -73,7 +73,7 @@ namespace WildBlueIndustries
         {
             string info = base.GetInfo();
 
-            info += string.Format("\n<b>-Electric Charge Required:</b> {0:f1}EC", ecRequired);
+            info += string.Format("\n<b>-Electric Charge Required (max):</b> {0:f1}EC", ecRequired);
 
             return info;
         }
@@ -90,23 +90,18 @@ namespace WildBlueIndustries
                 return;
 
             //Do we have enough electricity to run the engine?
-            Vessel.ActiveResource electricCharge = this.part.vessel.GetActiveResource(electricChargeDef);
             double ecPerTimeTick = ecRequired * TimeWarp.fixedDeltaTime * engine.currentThrottle;
+            double ecObtained = this.part.RequestResource("ElectricCharge", ecPerTimeTick, ResourceFlowMode.ALL_VESSEL);
 
-            if (electricCharge != null)
+            if (ecObtained / ecPerTimeTick < 0.999)
             {
-                if (electricCharge.amount < ecPerTimeTick)
-                {
-                    engine.currentThrottle = 0;
-                    engine.requestedThrottle = 0;
-                    engine.flameout = true;
-                    engine.Shutdown();
-                    ScreenMessages.PostScreenMessage(kOutOfFuel, 5.0f, ScreenMessageStyle.UPPER_CENTER);
-                    return;
-                }
-
-                //We do, so take our share.
-                electricCharge.amount -= ecPerTimeTick;
+                engine.currentThrottle = 0;
+                engine.requestedThrottle = 0;
+                engine.flameout = true;
+                engine.Shutdown();
+                this.part.RequestResource("ElectricCharge", -ecObtained);
+                ScreenMessages.PostScreenMessage(kOutOfFuel, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                return;
             }
         }
 

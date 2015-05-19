@@ -31,7 +31,7 @@ namespace WildBlueIndustries
         [KSPField(guiActive = true, guiName = "Temperature")]
         public string reactorStatus;
 
-        protected Light[] lights;
+        protected WBIAnimation lightAnim;
 
         public override string GetInfo()
         {
@@ -66,7 +66,7 @@ namespace WildBlueIndustries
             if (reactorIsOn == false)
             {
                 ecObtained = this.part.RequestResource("ElectricCharge", ecNeededToStart);
-                if (ecObtained < ecNeededToStart)
+                if (ecObtained / ecNeededToStart < 0.999)
                 {
                     this.part.RequestResource("ElectricCharge", -ecObtained);
                     ScreenMessages.PostScreenMessage("Fully charge the reactor before starting.", 5.0f, ScreenMessageStyle.UPPER_CENTER);
@@ -101,6 +101,10 @@ namespace WildBlueIndustries
         {
             base.OnStart(state);
 
+            lightAnim = this.part.FindModuleImplementing<WBIAnimation>();
+            if (lightAnim != null)
+                lightAnim.showGui(false);
+
             Events["StartResourceConverter"].guiActive = false;
             Events["StartResourceConverter"].guiActiveEditor = false;
             Events["StopResourceConverter"].guiActive = false;
@@ -121,20 +125,18 @@ namespace WildBlueIndustries
 
         public void Activate()
         {
-            List<string> fusionEmitters = new List<string>();
-
-            fusionEmitters.Add("Fusion");
-
-            Utils.showOnlyEmittersInList(this.part, fusionEmitters);
-
             StartResourceConverter();
+
+            if (lightAnim != null && lightAnim.isDeployed == false)
+                lightAnim.ToggleAnimation();
         }
 
         public void Shutdown()
         {
-            Utils.showOnlyEmittersInList(this.part, null);
-
             StopResourceConverter();
+
+            if (lightAnim != null && lightAnim.isDeployed)
+                lightAnim.ToggleAnimation();
         }
 
     }

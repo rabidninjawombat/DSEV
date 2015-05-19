@@ -12,7 +12,7 @@ namespace WildBlueIndustries
         public SupernovaController supernovaController;
 
         public SupernovaDebug() :
-        base("Supernova Debug Menu", 300, 300)
+        base("Supernova Debug Menu", 300, 100)
         {
             Resizable = false;
         }

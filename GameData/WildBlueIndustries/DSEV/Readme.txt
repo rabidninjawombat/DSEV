@@ -18,6 +18,21 @@ Copy the WildBlueIndustries directory into your GameData folder.
 
 ---REVISION HISTORY---
 
+0.2.22: The Final Frontier
+
+Fusion Reactors
+- Replaced WB-2 particle effects with specular map to improve game performance.
+- Added WB-1 Mandarin 1.25m fusion reactor.
+- Added WB-MF Micro Fusion Reactor. It is a 0.625m fusion reactor.
+
+Hex Trusses
+- Added the Tripple Hex Truss for even longer hex truss assemblies.
+
+Bug Fixes
+- Electrical charge is now being requested properly for the radiator and ArcJet engine and RCS thruster.
+- The FLM-100 now holds the proper amout of Liquid Fuel / Oxidizer.
+- The part categorizer now properly sorts parts when multiple mods from Wild Blue Industries are installed.
+
 0.3.21: Blackjack
 
 Docking Ports
