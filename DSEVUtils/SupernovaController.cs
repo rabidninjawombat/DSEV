@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
+using KSP.IO;
 
 /*
 Source code copyright 2015, by Michael Billard (Angel-125)
@@ -26,6 +28,7 @@ namespace WildBlueIndustries
 
     public class SupernovaController : ExtendedPartModule
     {
+        const float kIdleTargetTemp = 300;
         const float kMinimumECToCharge = 1.0f;
         const string kStartEngine = "Start Engine";
         const string kToggleEngine = "Toggle Engine";
@@ -37,6 +40,11 @@ namespace WildBlueIndustries
         const string kChargingCapacitor = "Charging capacitor before engine start...";
         const string kOverheated = "Overheated";
         const string kEngineStarted = "Engine started.";
+        const string kPulsedPlasmaEditorNote = "You won't be able to access Pulsed Plasma Mode in flight until you upgrade the engine.";
+        const string kInsufficientResources = "Insufficient resources to upgrade the engine.";
+        const string kInsufficientScience = "Insufficient Science to upgrade the engine.";
+        const string kEngineerNeeded = "You need a highly experienced engineer in order to upgrade the engine.";
+        const string kEngineUpgraded = "Engine upgraded.";
 
         protected MultiModeEngine multiModeEngine;
         protected ModuleEnginesFXWBI primaryEngine;
@@ -60,6 +68,12 @@ namespace WildBlueIndustries
         [KSPField(guiActive = true, guiName = "Engine Temperature")]
         string engineTemperature;
 
+        [KSPField(isPersistant = true)]
+        public bool engineUpgraded;
+
+        [KSPField(isPersistant = true)]
+        public string upgradeResources;
+
         public bool requiresECToStart = true;
         public float fuelConsumption;
         public string primaryEngineID;
@@ -70,8 +84,98 @@ namespace WildBlueIndustries
         public bool showDebugButton = true;
         public float primaryEngineHeat = 0f;
         public float secondaryEngineHeat = 0;
+        protected bool wasRunningPrimary;
 
         #region Events And Actions
+        [KSPEvent(guiActive = false, guiActiveEditor =  false, guiName = "Upgrade Engine", active = true, externalToEVAOnly = true, unfocusedRange = 3.0f, guiActiveUnfocused = true)]
+        public void UpgradeEngine()
+        {
+            string[] resourcesRequired = upgradeResources.Split(new char[] { ';' });
+            string[] resourceInfo;
+            PartResourceDefinitionList definitions = PartResourceLibrary.Instance.resourceDefinitions;
+            PartResourceDefinition resourceDef;
+            Vessel.ActiveResource activeResource;
+            double resourceAmount;
+
+            //Make sure we have an experienced engineer.
+            if (FlightGlobals.ActiveVessel.isEVA)
+            {
+                Vessel vessel = FlightGlobals.ActiveVessel;
+                Experience.ExperienceTrait experience = vessel.GetVesselCrew()[0].experienceTrait;
+
+                if (experience.TypeName != "Engineer" || experience.CrewMemberExperienceLevel() < 5)
+                {
+                    ScreenMessages.PostScreenMessage(kEngineerNeeded, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                    return;
+                }
+            } 
+            
+            //Ok, we have an experienced engineer. Now does the vessel have sufficient resources?
+            foreach (string resourceRequired in resourcesRequired)
+            {
+                //Get the resource info
+                resourceInfo = resourceRequired.Split(new char[] { ',' });
+
+                //Is this a science "resource" ?
+                if (resourceInfo[0] == "Science" && ResearchAndDevelopment.Instance != null)
+                {
+                    resourceAmount = double.Parse(resourceInfo[1]);
+                    if (ResearchAndDevelopment.CanAfford((float)resourceAmount) == false)
+                    {
+                        ScreenMessages.PostScreenMessage(kInsufficientScience, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                        return;
+                    }
+
+                    //Pay the science cost.
+                    ResearchAndDevelopment.Instance.CheatAddScience(-(float)resourceAmount);
+                    continue;
+                }
+
+                //Find definition
+                resourceDef = definitions[resourceInfo[0]];
+                if (resourceDef == null)
+                {
+                    ScreenMessages.PostScreenMessage(kInsufficientResources, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                    return;
+                }
+
+                //See if the vessel has the required amount of resources
+                activeResource = this.vessel.GetActiveResource(resourceDef);
+                if (activeResource == null)
+                {
+                    ScreenMessages.PostScreenMessage(kInsufficientResources, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                    return;
+                }
+
+                resourceAmount = double.Parse(resourceInfo[1]);
+                if (activeResource.amount <= resourceAmount)
+                {
+                    ScreenMessages.PostScreenMessage(kInsufficientResources, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+                    return;
+                }
+
+                //Take the resource
+                this.part.RequestResource(resourceDef.id, resourceAmount, ResourceFlowMode.ALL_VESSEL);
+            }
+
+            //If we got this far then I guess we should just go ahead and upgrade the engine *sigh...* ;)
+            multiModeEngine.Events["ModeEvent"].guiActive = true;
+            this.Events["UpgradeEngine"].guiActiveUnfocused = false;
+            engineUpgraded = true;
+            ScreenMessages.PostScreenMessage(kEngineUpgraded, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+        }
+
+        [KSPEvent(guiActiveEditor = true, guiName = "Toggle Mode", active = true)]
+        public void ToggleModeEditor()
+        {
+            //Toggle the mode.
+            multiModeEngine.Events["ModeEvent"].Invoke();
+
+            //In the editor, remind the player that the engine must be upgraded in flight before pulsed plasma mode can be used.
+            if (multiModeEngine.mode == multiModeEngine.secondaryEngineID)
+                ScreenMessages.PostScreenMessage(kPulsedPlasmaEditorNote, 5.0f, ScreenMessageStyle.UPPER_CENTER);
+        }
+
         [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "Show Debug", active = true)]
         public void ShowDebug()
         {
@@ -79,7 +183,7 @@ namespace WildBlueIndustries
             debugMenu.ToggleVisible();
         }
 
-        [KSPEvent(guiActive = true, guiName = "Start Engine", active = true, externalToEVAOnly = false, unfocusedRange = 3.0f, guiActiveUnfocused = true)]
+        [KSPEvent(guiActive = true, guiName = "Start Engine", active = true)]
         public void ToggleReactor()
         {
             //If we got this far then it means we have the potential to start.
@@ -126,6 +230,14 @@ namespace WildBlueIndustries
         #endregion
 
         #region Overrides
+        public override string GetInfo()
+        {
+            if (string.IsNullOrEmpty(upgradeResources) == false)
+                return kPulsedPlasmaEditorNote + "\n<b>Required to upgrade:</b> " + upgradeResources;
+            else
+                return kPulsedPlasmaEditorNote;
+        }
+
         protected override void getProtoNodeValues(ConfigNode protoNode)
         {
             base.getProtoNodeValues(protoNode);
@@ -178,9 +290,25 @@ namespace WildBlueIndustries
             //We don't have access to the Update or FixedUpdate or OnUpdate or OnFixedUpdate methods from
             //the engine module. We need to lend a hand.
             if (multiModeEngine.runningPrimary)
+            {
+                if (!wasRunningPrimary)
+                {
+                    secondaryEngine.HideParticleEffects();
+                    primaryEngine.ShowParticleEffects();
+                    wasRunningPrimary = multiModeEngine.runningPrimary;
+                }
                 primaryEngine.UpdateEngineState();
+            }
             else
+            {
+                if (wasRunningPrimary)
+                {
+                    secondaryEngine.ShowParticleEffects();
+                    primaryEngine.HideParticleEffects();
+                    wasRunningPrimary = multiModeEngine.runningPrimary;
+                }
                 secondaryEngine.UpdateEngineState();
+            }
 
             //Set engine temperature
             engineTemperature = String.Format("{0:#.##}K", this.part.temperature);
@@ -248,6 +376,21 @@ namespace WildBlueIndustries
             multiModeEngine.Events["DisableAutoSwitch"].guiActiveEditor = false;
             multiModeEngine.Events["EnableAutoSwitch"].guiActive = false;
             multiModeEngine.Events["EnableAutoSwitch"].guiActiveEditor = false;
+            multiModeEngine.Events["ModeEvent"].guiActiveEditor = false;
+
+            //Allow mode switching if the engine has been upgraded, or show the upgrade button.
+            if (engineUpgraded == false)
+            {
+                multiModeEngine.Events["ModeEvent"].guiActive = false;
+
+                //Make sure we're not in pulsed plasma mode
+                if (multiModeEngine.runningPrimary == false)
+                    multiModeEngine.Events["ModeEvent"].Invoke();
+            }
+            else
+            {
+                this.Events["UpgradEngine"].guiActiveUnfocused = false;
+            }
 
             //Hide engine gui
             foreach (ModuleEnginesFXWBI engine in engineList)
@@ -333,16 +476,20 @@ namespace WildBlueIndustries
             Events["ToggleReactor"].guiName = kShutdownEngine;
             if (multiModeEngine.runningPrimary)
             {
+                wasRunningPrimary = true;
                 primaryEngine.Activate();
                 primaryEngine.part.force_activate();
-                primaryEngine.ShowParticleEffects(true);
+                if (primaryEngine.currentThrottle > 0)
+                    primaryEngine.ShowParticleEffects(true);
             }
             else
             {
+                wasRunningPrimary = false;
                 secondaryEngine.Activate();
                 secondaryEngine.part.force_activate();
                 secondaryEngine.staged = true;
-                secondaryEngine.ShowParticleEffects(true);
+                if (secondaryEngine.currentThrottle > 0)
+                    secondaryEngine.ShowParticleEffects(true);
             }
         }
 

@@ -36,6 +36,23 @@ namespace WildBlueIndustries
                 onActiveDelegate(this.engineID, this.staged);
         }
 
+        public void HideParticleEffects()
+        {
+            KSPParticleEmitter[] emitters = part.GetComponentsInChildren<KSPParticleEmitter>();
+
+            if (emitters == null)
+                return;
+
+            foreach (KSPParticleEmitter emitter in emitters)
+            {
+                if (emitter.name == this.runningEffectName)
+                {
+                    emitter.emit = false;
+                    emitter.enabled = false;
+                }
+            }
+        }
+
         public void ShowParticleEffects(bool forceOn = false)
         {
             KSPParticleEmitter[] emitters = part.GetComponentsInChildren<KSPParticleEmitter>();

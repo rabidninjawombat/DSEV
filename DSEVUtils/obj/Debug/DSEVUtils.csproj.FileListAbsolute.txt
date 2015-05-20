@@ -12,3 +12,5 @@ C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Mono.Security.dll
 C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\WildBlueTools.pdb
 C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\obj\Debug\DSEVUtils.dll
 C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\obj\Debug\DSEVUtils.pdb
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Cooldown.dll
+C:\Projects\KSP\WildBlueIndustries\DSEV\DSEVUtils\bin\Debug\Cooldown.pdb

@@ -63,6 +63,10 @@
     <Compile Include="SupernovaDebug.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Cooldown\Cooldown.csproj">
+      <Project>{29BA1A12-365A-4E8E-9786-57772F0681DB}</Project>
+      <Name>Cooldown</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\WildBlueTools\WildBlueTools.csproj">
       <Project>{CC0BDF1A-9641-4628-9F0F-3500DDC99534}</Project>
       <Name>WildBlueTools</Name>
