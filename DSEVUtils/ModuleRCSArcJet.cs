@@ -20,8 +20,10 @@ namespace WildBlueIndustries
 {
     public class ModuleRCSArcJet : ModuleRCS
     {
-        private const float maxSoundDistance = 10.0f;
+        private const float maxSoundDistance = 5.0f;
         private const double kDefaultECRequired = 150;
+
+        public static float soundEffectVolume = GameSettings.SHIP_VOLUME;
 
         [KSPField(isPersistant = true)]
         public string rcsEffectName;
@@ -99,7 +101,7 @@ namespace WildBlueIndustries
                 return;
 
             soundClip.audio = part.gameObject.AddComponent<AudioSource>();
-            soundClip.audio.volume = GameSettings.SHIP_VOLUME;
+            soundClip.audio.volume = soundEffectVolume;
             soundClip.audio.maxDistance = maxSoundDistance;
 
             soundClip.audio.clip = GameDatabase.Instance.GetAudioClip(soundFilePath);
@@ -138,6 +140,7 @@ namespace WildBlueIndustries
             {
                 if (isRCSOn && rcsEnabled && soundIsPlaying == false)
                 {
+                    soundClip.audio.volume = soundEffectVolume;
                     soundClip.audio.Play();
                     soundIsPlaying = true;
                 }
